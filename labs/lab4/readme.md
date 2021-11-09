@@ -21,4 +21,8 @@ kubectl get svc -n prod-nginx -o wide
 ```
 ```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
+...
+kubectl get ep my-nginx-nodeport -n prod-nginx -o yaml
+...
 ```
+
