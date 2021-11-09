@@ -64,7 +64,7 @@ Events:
   ----    ------             ----  ----                   -------
   Normal  ScalingReplicaSet  27m   deployment-controller  Scaled up replica set nginx-deployment-7848d4b86f to 3
  ```
-### Execercise
+### Exerrcise
 Check the POD lables
 ```
 kubectl get po -o wide --show-labels
