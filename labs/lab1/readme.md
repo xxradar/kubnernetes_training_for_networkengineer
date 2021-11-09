@@ -26,6 +26,7 @@ Analyse the output of kubectl with the different flags
 ```
 kubectl get po
 kubectl get po -n prod-nginx
+kubectl get po -A
 ```
 ```
 kubectl get po -n prod-nginx -o wide
