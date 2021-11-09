@@ -25,7 +25,7 @@ kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
 ## Exercise
 Create a test pod
 ```
-kubectl run -it -n prod-nginx --image xxradar/hackon hackpod -- bash
+kubectl run -it --rm -n prod-nginx --image xxradar/hackon hackpod -- bash
 ```
 ```
 ifconfig
@@ -43,7 +43,7 @@ Create a test pod in another namespace
 kubectl create ns myhackns 
 ```
 ```
-kubectl run -it -n myhackns --image xxradar/hackon hackpod -- bash
+kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
 ```
 ```
 curl my-nginx-clusterip
