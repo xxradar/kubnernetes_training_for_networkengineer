@@ -1,5 +1,5 @@
 ## Lab2
-
+Create a deployment
 ```
 kubectl apply -f - <<EOF
 apiVersion: apps/v1
