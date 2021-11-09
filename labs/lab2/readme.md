@@ -29,8 +29,20 @@ EOF
 kubectl get deploy -o wide
 ```
 ### Execercise
+Check the POD lables
+```
+kubectl get po -o wide --show-labels
+```
 Try to add a pod 
 ```
- kubectl run  --image nginx -l app=nginx -l pod-template-hash=7848d4b86f testnginx
+kubectl run  --image nginx -l app=nginx,pod-template-hash=7848d4b86f testnginx
+ ```
+ Check the replication set
+ ```
+ kubectl get rs
+ ```
+ ```
+ kubectl describe rs nginx-deployment-7848d4b86f
+ ...
  ```
  
