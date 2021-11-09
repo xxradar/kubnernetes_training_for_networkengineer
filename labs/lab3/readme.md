@@ -6,6 +6,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: my-nginx-clusterip
+  namespace: prod-nginx
 spec:
   ports:
   - port: 80
@@ -15,16 +16,16 @@ spec:
 EOF
 ```
 ```
-kubectl get svc -o wide
+kubectl get svc -n prod-nginx -o wide
 ```
 ```
-kubectl get ep my-nginx-clusterip -o yaml
+kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
 ```
 
 ## Exercise
 Create a test pod
 ```
-kubectl run -it --image xxradar/hackon hackpod -- bash
+kubectl run -it -n prod-nginx --image xxradar/hackon hackpod -- bash
 ```
 ```
 ifconfig
