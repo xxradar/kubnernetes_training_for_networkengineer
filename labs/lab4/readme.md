@@ -18,6 +18,13 @@ EOF
 ```
 ```
 kubectl get svc -n prod-nginx -o wide
+NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE    SELECTOR
+my-nginx-clusterip   ClusterIP   10.99.180.103   <none>        80/TCP         13m    app=nginx
+my-nginx-nodeport    NodePort    10.107.221.36   <none>        80:31062/TCP   105s   app=nginx
+```
+Try to reach the NodePort
+```
+curl http:///127.0.0.1:31062
 ```
 ```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
