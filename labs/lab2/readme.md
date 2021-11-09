@@ -6,6 +6,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
+  namespace: prod-nginx
   labels:
     app: nginx-deployment
 spec:
@@ -26,10 +27,10 @@ spec:
 EOF
 ```
 ```
-kubectl get deploy -o wide
+kubectl get deploy -n prod-nginx  -o wide
 ```
 ```
-kubectl describe deploy nginx-deployment
+kubectl describe deploy -n prod-nginx nginx-deployment
 ```
 ```
 Name:                   nginx-deployment
@@ -67,22 +68,22 @@ Events:
 ### Exercise
 Check the POD lables
 ```
-kubectl get po -o wide --show-labels
+kubectl get po -n prod-nginx -o wide --show-labels
 ```
 Try to add a pod 
 ```
-kubectl run  --image nginx -l app=nginx,pod-template-hash=7848d4b86f testnginx
+kubectl run  -n prod-nginx --image nginx -l app=nginx,pod-template-hash=7848d4b86f testnginx
  ```
  Check the replication set
  ```
  kubectl get rs
  ```
  ```
- kubectl describe rs nginx-deployment-7848d4b86f
+ kubectl describe rs -n prod-nginx nginx-deployment-7848d4b86f
  ...
  ```
  ```
- kubectl scale --replicas=6 deploy/nginx-deployment
+ kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment
  ```
  ### Exercise
  - delete some pods from the deployment
