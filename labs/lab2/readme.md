@@ -81,4 +81,7 @@ kubectl run  --image nginx -l app=nginx,pod-template-hash=7848d4b86f testnginx
  kubectl describe rs nginx-deployment-7848d4b86f
  ...
  ```
+ ```
+ kubectl scale --replicas=6 deploy/nginx-deployment
+ ```
  
