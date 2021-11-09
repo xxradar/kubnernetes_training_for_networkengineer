@@ -1,10 +1,15 @@
 ### Lab 1
+Create a namespace
+```
+kubectl create ns prod-nginx
+```
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
 kind: Pod
 metadata:
   name: nginx-pod
+  namespace: prod-nginx
   labels:
     name: nginx
     environment: dev
@@ -19,12 +24,13 @@ EOF
 
 ```
 kubectl get po
+kubectl get po -n prod-nginx
 ```
 ```
-kubectl get po -o wide
+kubectl get po -n prod-nginx -o wide
 ```
 ```
-kubectl get po -o wide --show-labels
+kubectl get po -n prod-nginx -o wide --show-labels
 ```
 ### Execrcise
 - Create additional pods 
