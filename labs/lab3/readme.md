@@ -59,8 +59,8 @@ metadata:
   name: my-nginx-clusterip2
 spec:
   ports:
-  - port: 80
-    targetPort: 8765
+  - port: 8765
+    targetPort: 80
     protocol: TCP
   selector:
     app: nginx
