@@ -84,7 +84,7 @@ kubectl run  -n prod-nginx --image nginx -l app=nginx,pod-template-hash=7848d4b8
  ```
  Check the replication set
  ```
- kubectl get rs
+ kubectl get rs -n prod-nginx
  ```
  ```
  kubectl describe rs -n prod-nginx nginx-deployment-7848d4b86f
