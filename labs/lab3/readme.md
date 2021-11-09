@@ -104,8 +104,8 @@ EOF
 ```
 ```
 kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
-curl my-nginx-clusterip   # Does this work?
-curl my-nginx-clusterip.prod-nginx # Does this work?
-curl my-nginx-clusterip.dev-nginx # Does this work?
-curl my-nginx-clusterip.dev-nginx:8765 # Does this work?
+curl my-nginx-clusterip                 # Does this work?
+curl my-nginx-clusterip.prod-nginx      # Does this work?
+curl my-nginx-clusterip.dev-nginx       # Does this work?
+curl my-nginx-clusterip.dev-nginx:8765  # Does this work?
 ```
