@@ -5,6 +5,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: nginx-pod
+  labels:
+    name: nginx
+    environment: dev
 spec:
   containers:
   - name: nginx
@@ -14,3 +17,12 @@ spec:
 EOF
 ```
 
+```
+kubectl get po
+```
+```
+kubectl get po -o wide
+```
+```
+kubectl get po -o wide --show-labels
+```
