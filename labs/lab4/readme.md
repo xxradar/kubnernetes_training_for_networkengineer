@@ -26,7 +26,7 @@ Try to reach the NodePort
 ```
 curl http:///127.0.0.1:31062
 ```
-Compare the endpoints of the two service
+Compare the endpoints of the two services
 ```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
 ...
