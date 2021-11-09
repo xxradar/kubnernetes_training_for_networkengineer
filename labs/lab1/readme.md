@@ -26,3 +26,6 @@ kubectl get po -o wide
 ```
 kubectl get po -o wide --show-labels
 ```
+### Execrcise
+- Create additional pods 
+- Delete one of these pods. Does it come back?
