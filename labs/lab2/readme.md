@@ -25,3 +25,6 @@ spec:
         - containerPort: 80
 EOF
 ```
+```
+kubectl get deploy -o wide
+```
