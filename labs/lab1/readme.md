@@ -3,6 +3,7 @@ Create a namespace
 ```
 kubectl create ns prod-nginx
 ```
+Deploy a a single pod in the newly create namespace
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
