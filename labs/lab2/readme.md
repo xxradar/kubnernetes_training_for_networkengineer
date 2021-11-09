@@ -28,3 +28,9 @@ EOF
 ```
 kubectl get deploy -o wide
 ```
+### Execercise
+Try to add a pod 
+```
+ kubectl run  --image nginx -l app=nginx -l pod-template-hash=7848d4b86f testnginx
+ ```
+ 
