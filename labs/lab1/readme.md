@@ -22,7 +22,7 @@ spec:
     - containerPort: 80
 EOF
 ```
-
+Analyse the output of kubectl with the different flags
 ```
 kubectl get po
 kubectl get po -n prod-nginx
