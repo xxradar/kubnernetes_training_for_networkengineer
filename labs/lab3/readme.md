@@ -37,5 +37,23 @@ curl my-nginx-clusterip
 ...
 curl my-nginx-clusterip.default
 ```
+Create a test pod in another namespace
+```
+kubectl create ns myhackns 
+```
+```
+kubectl run -it -n myhackns --image xxradar/hackon hackpod -- bash
+```
+```
+ifconfig
+...
+cat /etc/resolv
+...
+```
+```
+curl my-nginx-clusterip
+...
+curl my-nginx-clusterip.default
+```
 
 
