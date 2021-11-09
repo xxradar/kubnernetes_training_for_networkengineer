@@ -1,5 +1,5 @@
 ## LAB 3
-
+Create a service of type ClusterIP 
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
