@@ -30,6 +30,8 @@ kubectl get deploy -o wide
 ```
 ```
 kubectl describe deploy nginx-deployment
+```
+```
 Name:                   nginx-deployment
 Namespace:              default
 CreationTimestamp:      Tue, 09 Nov 2021 09:44:01 +0100
