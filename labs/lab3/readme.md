@@ -50,4 +50,20 @@ curl my-nginx-clusterip
 curl my-nginx-clusterip.default
 ```
 
+## Additional exercise
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-clusterip2
+spec:
+  ports:
+  - port: 80
+    targetPort: 8765
+    protocol: TCP
+  selector:
+    app: nginx
+EOF
+```
 
