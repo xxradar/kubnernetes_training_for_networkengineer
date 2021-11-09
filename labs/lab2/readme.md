@@ -66,7 +66,8 @@ Events:
   Normal  ScalingReplicaSet  27m   deployment-controller  Scaled up replica set nginx-deployment-7848d4b86f to 3
 ```
 ```
-kubectl get rs -n prod-nginx ```
+kubectl get rs -n prod-nginx 
+```
 ```
 kubectl describe  rs -n prod-nginx nginx-deployment-7848d4b86f
 ```
