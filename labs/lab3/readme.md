@@ -65,7 +65,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: my-nginx-clusterip
-namespace: dev-nginx
+  namespace: dev-nginx
 spec:
   ports:
   - port: 8765
