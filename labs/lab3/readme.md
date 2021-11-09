@@ -54,9 +54,18 @@ curl my-nginx-clusterip.default
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev-nginx
+EOF
+```
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
 kind: Service
 metadata:
-  name: my-nginx-clusterip2
+  name: my-nginx-clusterip
+namespace: dev-nginx
 spec:
   ports:
   - port: 8765
