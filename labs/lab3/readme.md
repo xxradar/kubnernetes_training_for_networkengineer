@@ -35,6 +35,7 @@ cat /etc/resolv
 ```
 curl my-nginx-clusterip
 ...
+curl my-nginx-clusterip.default
 ```
 
 
