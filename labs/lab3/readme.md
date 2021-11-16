@@ -36,7 +36,7 @@ cat /etc/resolv.conf
 ```
 curl my-nginx-clusterip
 ...
-curl my-nginx-clusterip.default
+curl my-nginx-clusterip.prod-nginx
 ```
 Create a test pod in another namespace
 ```
