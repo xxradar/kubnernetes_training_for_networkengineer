@@ -48,7 +48,7 @@ kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
 ```
 curl my-nginx-clusterip
 ...
-curl my-nginx-clusterip.default
+curl my-nginx-clusterip.prod-nginx
 ```
 
 ## Additional exercise
