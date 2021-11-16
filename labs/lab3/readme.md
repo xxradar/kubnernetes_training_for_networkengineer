@@ -30,7 +30,7 @@ kubectl run -it --rm -n prod-nginx --image xxradar/hackon hackpod -- bash
 ```
 ifconfig
 ...
-cat /etc/resolv
+cat /etc/resolv.conf
 ...
 ```
 ```
