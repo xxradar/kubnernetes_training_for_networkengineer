@@ -27,5 +27,6 @@ Try to reach the NodePort
 curl http:///127.0.0.1:31062
 ...
 curl http:///<external-ip>:80
+...
 ```
 
