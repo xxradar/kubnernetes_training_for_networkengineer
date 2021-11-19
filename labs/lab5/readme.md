@@ -25,5 +25,7 @@ my-nginx-lb          LoadBalancer  10.107.221.36   <Pending>     80:31062/TCP   
 Try to reach the NodePort
 ```
 curl http:///127.0.0.1:31062
+...
+curl http:///<external-ip>:80
 ```
 
