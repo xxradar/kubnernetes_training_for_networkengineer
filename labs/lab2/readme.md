@@ -18,6 +18,7 @@ spec:
     metadata:
       labels:
         app: nginx
+        env: prod
     spec:
       containers:
       - name: nginx
