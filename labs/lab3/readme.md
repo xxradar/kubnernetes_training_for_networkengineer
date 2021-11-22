@@ -74,6 +74,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
+      env: dev
   template:
     metadata:
       labels:
