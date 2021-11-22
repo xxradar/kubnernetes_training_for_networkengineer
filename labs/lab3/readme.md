@@ -74,11 +74,11 @@ spec:
   selector:
     matchLabels:
       app: nginx
-      env: dev
   template:
     metadata:
       labels:
         app: nginx
+        env: dev
     spec:
       containers:
       - name: nginx
