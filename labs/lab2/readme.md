@@ -75,7 +75,7 @@ kubectl describe  rs -n prod-nginx nginx-deployment-7848d4b86f
  
  
 ### Exercise
-Check the POD lables
+Check the POD labels
 ```
 kubectl get po -n prod-nginx -o wide --show-labels
 ```
