@@ -82,7 +82,7 @@ spec:
     - namespaceSelector:
         matchLabels:
           project: debug
-    - podSelector:
+      podSelector:
         matchLabels:
           mode: debug
     ports:
