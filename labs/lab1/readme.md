@@ -17,7 +17,7 @@ metadata:
   namespace: prod-nginx
   labels:
     name: nginx
-    environment: dev
+    environment: prod
 spec:
   containers:
   - name: nginx
