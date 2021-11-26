@@ -2,9 +2,9 @@
 Check connectivity ...
 
 ```
-kubectl get po -n prod-nginx 
+kubectl get po -n prod-nginx -o wide  --show-labels
 ...
-kubectl get svc -n prod-nginx
+kubectl get svc -n prod-nginx -o wide --show-labels
 ...
 ```
 ```
