@@ -84,7 +84,7 @@ spec:
           project: debug
     - podSelector:
         matchLabels:
-          debugger: true
+          debug: on
     ports:
     - protocol: TCP
       port: 80
