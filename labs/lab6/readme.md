@@ -1,5 +1,5 @@
 ## LAB 6 - Ingress <br>
-Checkout this repo for a detailed Ingress Lab example using NGINX <br>
+Checkout this repo for a detailed Ingress Lab example using a NGINX ingress controller <br>
 https://github.com/xxradar/ingress_kubernetes_workshop
 
 If you're using Rancher Desktop, ingress is implemented via Traefik.<br>
