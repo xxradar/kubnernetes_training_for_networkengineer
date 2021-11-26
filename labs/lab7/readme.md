@@ -28,6 +28,12 @@ spec:
    - Egress
 EOF
 ```
+Check connectivity
+```
+kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
+curl curl my-nginx-clusterip
+curl <pod_ip>
+```
 ```
 kubectl apply -n prod-nginx -f - <<EOF
 apiVersion: networking.k8s.io/v1
@@ -47,3 +53,10 @@ spec:
       port: 80
 EOF
 ```
+Check connectivity
+```
+kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
+curl curl my-nginx-clusterip
+curl <pod_ip>
+```
+Connectivity form a different namespace ...
