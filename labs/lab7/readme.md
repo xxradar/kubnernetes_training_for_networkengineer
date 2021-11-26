@@ -95,4 +95,11 @@ kubectl label ns default project=debug
 ```
 ```
 kubectl run -it --rm  --image xxradar/hackon -l mode=debug debug
+curl my-nginx-clusterip.prod-nginx
+...
+kubectl run -it --rm  --image xxradar/hackon -l mode=nodebug debug
+curl my-nginx-clusterip.prod-nginx
+...
+kubectl run -it --rm  -n dev-nginx --image xxradar/hackon -l mode=nodebug debug
+curl my-nginx-clusterip.prod-nginx
 ```
