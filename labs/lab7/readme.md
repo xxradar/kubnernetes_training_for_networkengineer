@@ -31,7 +31,7 @@ EOF
 Check connectivity
 ```
 kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
-curl curl my-nginx-clusterip
+curl my-nginx-clusterip
 curl <pod_ip>
 ```
 Enable access on port 80
@@ -57,7 +57,7 @@ EOF
 Check connectivity
 ```
 kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
-curl curl my-nginx-clusterip
+curl my-nginx-clusterip
 curl <pod_ip>
 ```
 Connectivity form a different namespace ...
