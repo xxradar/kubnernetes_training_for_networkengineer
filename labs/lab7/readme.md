@@ -12,7 +12,7 @@ kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
 curl curl my-nginx-clusterip
 curl <pod_ip>
 ```
-
+Apply a default-deny all policy
 ```
 kubectl apply -n prod-nginx -f - <<EOF
 apiVersion: networking.k8s.io/v1
@@ -34,6 +34,7 @@ kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
 curl curl my-nginx-clusterip
 curl <pod_ip>
 ```
+Enable access on port 80
 ```
 kubectl apply -n prod-nginx -f - <<EOF
 apiVersion: networking.k8s.io/v1
