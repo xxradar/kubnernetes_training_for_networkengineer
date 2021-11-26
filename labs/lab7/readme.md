@@ -75,11 +75,21 @@ spec:
   - from:
     - podSelector:
         matchLabels: {}
+    ports:
+    - protocol: TCP
+      port: 80
+  - from:
     - namespaceSelector:
         matchLabels:
+          project: debug
+    - podSelector:
+        matchLabels: {}
           debug: true
     ports:
     - protocol: TCP
       port: 80
 EOF
+```
+```
+kubectl label ns default project=debug
 ```
