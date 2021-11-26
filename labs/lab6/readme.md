@@ -17,7 +17,7 @@ export WEB=$(kubectl get svc -n kube-system   traefik -o=jsonpath="{.spec.ports[
 echo $WEB
 echo $SECUREWEB 
 ```
-Let's create an ingress resource
+Let's create an ingress resource for HTTP
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
