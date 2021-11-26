@@ -1,4 +1,17 @@
 ## LAB 7 - Network Security Policies
+Check connectivity ...
+
+```
+kubectl get po -n prod-nginx 
+...
+kubectl get svc -n prod-nginx
+...
+```
+```
+kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
+curl curl my-nginx-clusterip
+curl <pod_ip>
+```
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
