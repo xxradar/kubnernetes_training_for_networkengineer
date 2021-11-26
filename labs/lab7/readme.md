@@ -61,3 +61,25 @@ curl my-nginx-clusterip
 curl <pod_ip>
 ```
 Connectivity form a different namespace ...
+```
+kubectl apply -n prod-nginx -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-http
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels: {}
+    - namespaceSelector:
+        matchLabels:
+          debug: true
+    ports:
+    - protocol: TCP
+      port: 80
+EOF
+```
