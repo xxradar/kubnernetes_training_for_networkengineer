@@ -1,4 +1,4 @@
-## LAB6 - Ingress <br>
+## LAB 6 - Ingress <br>
 Checkout this repo for a detailed Ingress Lab example using NGINX <br>
 https://github.com/xxradar/ingress_kubernetes_workshop
 
