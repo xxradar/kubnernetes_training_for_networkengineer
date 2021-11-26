@@ -2,20 +2,22 @@
 Checkout this repo for a detailed Ingress Lab example using NGINX <br>
 https://github.com/xxradar/ingress_kubernetes_workshop
 
-If you're using Rancher Desktop, Ingress is implemented via Traefik
+If you're using Rancher Desktop, ingress is implemented via Traefik.<br>
+Verify the service node ports.
 ```
 kubectl get svc -n kube-system   traefik
 NAME      TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
 traefik   LoadBalancer   10.43.45.176   192.168.5.15   80:31056/TCP,443:31101/TCP   21h
 xxradar@Philippes-MacBook-Pro-2 dev-fortinet %
 ```
+Let's store the node ports into an env variable for easy use.
 ```
 export SECUREWEB=$(kubectl get svc -n kube-system  traefik -o=jsonpath="{.spec.ports[?(@.port==443)].nodePort}")
 export WEB=$(kubectl get svc -n kube-system   traefik -o=jsonpath="{.spec.ports[?(@.port==80)].nodePort}")
 echo $WEB
 echo $SECUREWEB 
 ```
-
+Let's create in ingress resource
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
@@ -37,6 +39,7 @@ spec:
               number: 80
 EOF
 ```
+Verify access
 ```
 curl -kv http://localhost:$WEB
 ...
