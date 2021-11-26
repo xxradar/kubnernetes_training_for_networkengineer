@@ -8,7 +8,6 @@ Verify the service node ports.
 kubectl get svc -n kube-system   traefik
 NAME      TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
 traefik   LoadBalancer   10.43.45.176   192.168.5.15   80:31056/TCP,443:31101/TCP   21h
-xxradar@Philippes-MacBook-Pro-2 dev-fortinet %
 ```
 Let's store the node ports into an env variable for easy use.
 ```
@@ -51,6 +50,7 @@ openssl req -x509 -newkey rsa:2048 -keyout tls.key -out tls.crt -days 365 -nodes
 kubectl create secret tls tlscertsapp1 -n app1 --cert=./tls.crt --key=./tls.key
 kubectl describe secret -n app1 tlscertsapp1
 ```
+Create an ingress resource for HTTPS
 ```
 kubectl apply -n prod-nginx -f - <<EOF
 apiVersion: networking.k8s.io/v1
