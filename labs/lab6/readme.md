@@ -17,7 +17,7 @@ export WEB=$(kubectl get svc -n kube-system   traefik -o=jsonpath="{.spec.ports[
 echo $WEB
 echo $SECUREWEB 
 ```
-Let's create in ingress resource
+Let's create an ingress resource
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
@@ -45,7 +45,7 @@ curl -kv http://localhost:$WEB
 ...
 curl -kv  -H "Host: app1.dockersec.me" http://localhost:$WEB
 ```
-
+In order to enable TLS, we need to create a certificate.
 ```
 openssl req -x509 -newkey rsa:2048 -keyout tls.key -out tls.crt -days 365 -nodes -subj "/CN=tlsapp1.dockersec.me"
 kubectl create secret tls tlscertsapp1 -n app1 --cert=./tls.crt --key=./tls.key
