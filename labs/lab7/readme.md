@@ -93,3 +93,6 @@ EOF
 ```
 kubectl label ns default project=debug
 ```
+```
+kubectl run -it --rm  --image xxradar/hackon -l mode=debug debug
+```
