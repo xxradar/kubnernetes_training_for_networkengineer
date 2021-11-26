@@ -25,6 +25,8 @@ my-nginx-nodeport    NodePort    10.107.221.36   <none>        80:31062/TCP   10
 Try to reach the NodePort
 ```
 curl http:///127.0.0.1:31062
+...
+curl http://<node_ip>:31062
 ```
 Compare the endpoints of the two services
 ```
