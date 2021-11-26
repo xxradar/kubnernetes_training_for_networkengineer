@@ -83,7 +83,7 @@ spec:
         matchLabels:
           project: debug
     - podSelector:
-        matchLabels: {}
+        matchLabels:
           debug: true
     ports:
     - protocol: TCP
