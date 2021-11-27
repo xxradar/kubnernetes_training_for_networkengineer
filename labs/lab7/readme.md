@@ -53,10 +53,11 @@ spec:
   - to:
     - namespaceSelector:
         matchLabels:
-          k8s-app: kube-dns
+          kubernetes.io/metadata.name: kube-system
       podSelector:
         matchLabels:
-          kubernetes.io/metadata.name: kube-system
+          k8s-app: kube-dns
+
 EOF
 ```
 ```
