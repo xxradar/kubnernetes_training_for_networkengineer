@@ -35,6 +35,9 @@ EOF
 ```
 ```
 kubectl get netpol -n prod-nginx
+...
+kubectl describe netpol allow-http -n prod-nginx
+...
 ```
 ```
 kubectl run -it --rm --image xxradar/hackon debug
