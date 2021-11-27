@@ -99,8 +99,8 @@ curl my-nginx-clusterip
 curl <pod_ip>
 ...
 ```
-```
 Fix the debug access
+```
 kubectl apply -n prod-nginx -f - <<EOF
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
