@@ -30,8 +30,31 @@ EOF
 Check connectivity
 ```
 kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
+nslookup curl my-nginx-clusterip
 curl my-nginx-clusterip
 curl <pod_ip>
+```
+Fix the DNS resolving
+```
+kubectl apply -n prod-nginx -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  podSelector:
+    matchLabels: {}
+  policyTypes:
+   - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          k8s-app: kube-dns
+      podSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+EOF
 ```
 Enable access on port 80
 ```
