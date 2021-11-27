@@ -47,7 +47,7 @@ curl -kv  -H "Host: app1.dockersec.me" http://localhost:$WEB
 In order to enable TLS, we need to create a certificate.
 ```
 openssl req -x509 -newkey rsa:2048 -keyout tls.key -out tls.crt -days 365 -nodes -subj "/CN=tlsapp1.dockersec.me"
-kubectl create secret tls tlscertsapp1 -n app1 --cert=./tls.crt --key=./tls.key
+kubectl create secret tls tlscertsapp1 -n prod-nginx --cert=./tls.crt --key=./tls.key
 kubectl describe secret -n prod-nginx tlscertsapp1
 ```
 Create an ingress resource for HTTPS
