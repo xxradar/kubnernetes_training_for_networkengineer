@@ -21,8 +21,7 @@ metadata:
   name: default-deny
 spec:
   podSelector:
-    matchLabels:
-      app: nginx
+    matchLabels: {}
   policyTypes:
    - Ingress
    - Egress
