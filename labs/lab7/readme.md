@@ -100,6 +100,6 @@ curl my-nginx-clusterip.prod-nginx
 kubectl run -it --rm  -n myhackns --image xxradar/hackon -l mode=nodebug debug
 curl my-nginx-clusterip.prod-nginx
 ...
-kubectl run -it --rm  -n dev-nginx --image xxradar/hackon -l mode=nodebug debug
+kubectl run -it --rm  -n dev-nginx --image xxradar/hackon -l mode=debug debug
 curl my-nginx-clusterip.prod-nginx
 ```
