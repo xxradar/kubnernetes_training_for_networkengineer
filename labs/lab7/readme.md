@@ -30,7 +30,7 @@ EOF
 Check connectivity
 ```
 kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
-nslookup curl my-nginx-clusterip
+nslookup my-nginx-clusterip
 ...
 curl my-nginx-clusterip
 ...
@@ -62,7 +62,7 @@ EOF
 ```
 ```
 kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
-nslookup curl my-nginx-clusterip
+nslookup my-nginx-clusterip
 ...
 curl my-nginx-clusterip
 ...
