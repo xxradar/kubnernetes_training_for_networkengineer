@@ -33,7 +33,9 @@ spec:
     - Egress
 EOF
 ```
-
+```
+kubectl get netpol -n prod-nginx
+```
 ```
 kubectl run -it --rm --image xxradar/hackon debug
 ...
@@ -72,6 +74,9 @@ spec:
     - Ingress
     - Egress
 EOF
+```
+```
+kubectl get globalnetworkpolicy
 ```
 ```
 kubectl label ns myhackns quarantine=true
