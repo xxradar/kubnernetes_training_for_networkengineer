@@ -99,6 +99,32 @@ curl my-nginx-clusterip
 curl <pod_ip>
 ...
 ```
+Fix the debug access
+kubectl apply -n prod-nginx -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-debug-egress
+spec:
+  podSelector:
+    matchLabels:
+      run: debug
+  egress:
+  - to:
+    - podSelector:
+        matchLabels: {}
+EOF
+```
+```
+kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
+nslookup my-nginx-clusterip
+...
+curl my-nginx-clusterip
+...
+curl <pod_ip>
+...
+```
+                                       
 Connectivity form a different namespace ...
 ```
 kubectl apply -n prod-nginx -f - <<EOF
