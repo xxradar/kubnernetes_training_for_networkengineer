@@ -9,7 +9,7 @@ kubectl get svc -n prod-nginx -o wide --show-labels
 ```
 ```
 kubectl run -it --rm -n prod-nginx --image xxradar/hackon debug
-curl curl my-nginx-clusterip
+curl my-nginx-clusterip
 curl <pod_ip>
 ```
 Apply a default-deny all policy
