@@ -1,4 +1,4 @@
-## Lab 8 
+## Lab 8 - Calico Global policy example
 
 ```
 kubectl apply -f - <<EOF
