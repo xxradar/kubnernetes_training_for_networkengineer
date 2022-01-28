@@ -1,4 +1,5 @@
 ## LAB 6 - Ingress <br>
+(KIND Cluster NGINX INGRESS -- see below)
 
 ### Rancher Desktop
 If you're using `Rancher Desktop`, ingress is implemented via Traefik.<br>
