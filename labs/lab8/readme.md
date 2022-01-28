@@ -99,11 +99,13 @@ spec:
   endpointSelector:
     matchLabels:
       quarantine: "true"
-  ingressDeny:
-  - fromEntities:
+  egressDeny:
+  - toEntities:
     - "world"
-  ingress:
-  - fromEntities:
-    - "all"
 EOF
+```
+```
+kubectl run -it --rm --image xxradar/hackon debug
+...
+kubectl run -it --rm --image xxradar/hackon debug -l quarantine=true
 ```
