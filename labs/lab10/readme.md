@@ -45,3 +45,52 @@ kubectl logs -n prod-nginx nginx-deployment-77b8976db4-2n6gp
 10.10.110.157 - - [28/Jan/2022:20:51:33 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/7.68.0" "-"
 ...
 ```
+kubectl run -it --rm debug  --restart=Never --image=xxradar/hackon --overrides='{"kind":"Pod", "apiVersion":"v1", "spec": {"hostNetwork":true}}'
+If you don't see a command prompt, try pressing enter.
+root@kind-worker2:/#
+...
+```
+```
+root@kind-worker2:/# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: calibb5a86c99dc@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 1
+4: vxlan.calico: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UNKNOWN group default
+    link/ether 66:03:c5:fc:0f:e5 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.110.128/32 scope global vxlan.calico
+       valid_lft forever preferred_lft forever
+5: cali968e7ff47c5@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 2
+6: calif4e18bca3de@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 3
+10: calie634c06af99@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 4
+83: eth0@if84: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+    link/ether 02:42:ac:12:00:05 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.18.0.5/16 brd 172.18.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fc00:f853:ccd:e793::5/64 scope global nodad
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:acff:fe12:5/64 scope link
+       valid_lft forever preferred_lft forever
+...
+```
+```
+root@kind-worker2:/# tcpdump -i any -n
+21:42:26.770551 IP 172.18.0.3.37542 > 172.18.0.5.10250: Flags [.], ack 541207, win 501, options [nop,nop,TS val 1037616719 ecr 3538320227], length 0
+21:42:26.770619 IP 127.0.0.1.57908 > 127.0.0.1.42161: Flags [.], ack 526104, win 10741, options [nop,nop,TS val 1256196285 ecr 1256196285], length 0
+21:42:26.770634 IP 172.18.0.5.10250 > 172.18.0.3.37542: Flags [P.], seq 541207:541233, ack 0, win 501, options [nop,nop,TS val 3538320227 ecr 1037616719], length 26
+21:42:26.770665 IP 172.18.0.3.37542 > 172.18.0.5.10250: Flags [.], ack 541233, win 501, options [nop,nop,TS val 1037616719 ecr 3538320227], length 0
+21:42:26.770729 IP 127.0.0.1.42161 > 127.0.0.1.57908: Flags [P.], seq 526104:527530, ack 1, win 512, options [nop,nop,TS val 1256196285 ecr 1256196285], length 1426
+21:42:26.770784 IP 127.0.0.1.57908 > 127.0.0.1.42161: Flags [.], ack 527530, win 10741, options [nop,nop,TS val 1256196285 ecr 1256196285], length 0
+21:42:26.770882 IP 127.0.0.1.42161 > 127.0.0.1.57908: Flags [P.], seq 527530:527534, ack 1, win 512, options [nop,nop,TS val 1256196285 ecr 1256196285], length 4
+21:42:26.770902 IP 127.0.0.1.42161 > 127.0.0.1.57908: Flags [P.], seq 527534:527538, ack 1, win 512, options [nop,nop,TS val 1256196285 ecr 1256196285], length 4
+21:42:26.770912 IP 127.0.0.1.42161 > 127.0.0.1.57908: Flags [P.], seq 527538:528962, ack 1, win 512, options [nop,nop,TS val 1256196285 ecr 1256196285], length 1424
+21:42:26.770934 IP 127.0.0.1.57908 > 127.0.0.1.42161: Flags [.], ack 527538, win 10741, options [nop,nop,TS val 1256196285 ecr 1256196285], length 0
+21:42:26.770985 IP 172.18.0.5.10250 > 172.18.0.3.37542: Flags [P.], seq 542681:542711, ack 0, win 501, options [nop,nop,TS val 3538320227 ecr 1037616719], length 30
+21:42:26.771172 IP 172.18.0.3.37542 > 172.18.0.5.10250: Flags [.], ack 544483, win 501, options [nop,nop,TS val 1037616720 ecr 3538320228], length 0
