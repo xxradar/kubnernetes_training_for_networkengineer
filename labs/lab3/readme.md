@@ -34,7 +34,7 @@ cat /etc/resolv.conf
 ...
 ```
 ```
-curl <pod_ip>
+curl <a_prod-nginx_pod_ip>
 ...
 curl my-nginx-clusterip
 ...
@@ -48,7 +48,7 @@ kubectl create ns myhackns
 kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
 ```
 ```
-curl <pod_ip>
+curl <a_prod-nginx_pod_ip>
 ...
 curl my-nginx-clusterip
 ...
@@ -109,7 +109,7 @@ EOF
 ```
 ```
 kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
-curl  <pod_ip>                          # Does this work?
+curl  <a_prod-nginx_pod_ip>             # Does this work?
 curl my-nginx-clusterip                 # Does this work?
 curl my-nginx-clusterip.prod-nginx      # Does this work?
 curl my-nginx-clusterip.dev-nginx       # Does this work?
