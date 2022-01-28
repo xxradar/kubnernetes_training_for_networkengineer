@@ -38,6 +38,7 @@ kubectl proxy &
 ```
 curl http://localhost:8001/api/v1/namespaces/dev-nginx/services/http:my-nginx-clusterip:8765/proxy/
 ```
+### Playing with the kubernetes API
 ```
 curl http://localhost:8001/api/v1/
 ```
