@@ -38,6 +38,9 @@ kubectl get netpol -n prod-nginx
 ...
 kubectl describe netpol allow-http -n prod-nginx
 ...
+kubectl get globalnetworkpolicy
+...
+kubectl describe globalnetworkpolicy quarantine
 ```
 ```
 kubectl run -it --rm --image xxradar/hackon -n prod-nginx debug
