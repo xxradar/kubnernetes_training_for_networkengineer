@@ -83,10 +83,7 @@ Try to add a pod
 ```
 kubectl run  -n prod-nginx --image nginx -l app=nginx,env=prod,pod-template-hash=7848d4b86f testnginx
  ```
- Check the replication set
- ```
- kubectl get rs -n prod-nginx
- ```
+ Check the replication set again ...
  ```
  kubectl describe rs -n prod-nginx nginx-deployment-7848d4b86f
  ...
