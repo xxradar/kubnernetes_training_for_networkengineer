@@ -61,7 +61,6 @@ spec:
       podSelector:
         matchLabels:
           k8s-app: kube-dns
-
 EOF
 ```
 ```
