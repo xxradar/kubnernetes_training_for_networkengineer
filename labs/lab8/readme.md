@@ -40,10 +40,10 @@ kubectl describe netpol allow-http -n prod-nginx
 ...
 ```
 ```
-kubectl run -it --rm --image xxradar/hackon debug
+kubectl run -it --rm --image xxradar/hackon -n prod-nginx debug
 curl my-nginx-clusterip
 ...
-kubectl run -it --rm --image xxradar/hackon debug -l quarantine=true
+kubectl run -it --rm --image xxradar/hackon -n prod-nginx debug -l quarantine=true
 curl my-nginx-clusterip
 ...
 ```
