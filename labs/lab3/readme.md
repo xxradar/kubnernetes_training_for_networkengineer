@@ -46,6 +46,8 @@ kubectl create ns myhackns
 kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
 ```
 ```
+curl 10.11.104.184
+...
 curl my-nginx-clusterip
 ...
 curl my-nginx-clusterip.prod-nginx
