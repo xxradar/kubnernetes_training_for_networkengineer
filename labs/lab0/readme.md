@@ -54,11 +54,14 @@ kubectl get no
    .... 
 ```
 
+### Install HELM
 ```
 curl https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz -o helm-v3.8.0-linux-amd64.tar.gz
 tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
 sudo mv linux-amd64/helm /usr/local/bin/helm
 ```
+
+### Install Cilium CNI
 ```
 helm repo add cilium https://helm.cilium.io/
 ```
@@ -78,6 +81,7 @@ helm install cilium cilium/cilium --version 1.11.1 \
    --set image.pullPolicy=IfNotPresent \
    --set ipam.mode=kubernetes
 ```
+### Install Cilium CLI
 ```
 curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
 sha256sum --check cilium-linux-amd64.tar.gz.sha256sum
