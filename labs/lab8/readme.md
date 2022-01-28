@@ -88,7 +88,7 @@ kubectl label ns myhackns quarantine=true
 kubectl run -it --rm -n myhackns --image xxradar/hackon debug
 ```
 
-## LAB 8-bis
+## LAB 8-bis Cilium cluster wide network policy example
 ```
 kubectl apply -f -<<EOF
 apiVersion: "cilium.io/v2"
