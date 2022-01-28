@@ -70,6 +70,10 @@ kubectl apply -f custom-resources.yaml
 ```
 ### Verify cluster 
 ```
+watch kubectl get po -n calico-system
+```
+When all pods are running ... the nodes should be ready.
+```
 kubectl get no -o wide
 ```
   
