@@ -66,3 +66,8 @@ sudo mv linux-amd64/helm /usr/local/bin/helm
 kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
 kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
 ```
+### Verify cluster 
+```
+kubectl get no -o wide
+```
+  
