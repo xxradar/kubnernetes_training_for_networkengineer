@@ -64,7 +64,17 @@ sudo mv linux-amd64/helm /usr/local/bin/helm
 ### Install Calico CNI
 ```
 kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
-kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
+```
+Adjust the pod cidr in custom-resources.yaml to 10.10.0.0/16
+```
+wget https://docs.projectcalico.org/manifests/custom-resources.yaml
+```
+```
+vi  custom-resources.yaml 
+...
+```
+```
+kubectl apply -f custom-resources.yaml
 ```
 ### Verify cluster 
 ```
