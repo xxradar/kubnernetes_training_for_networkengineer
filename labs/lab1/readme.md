@@ -39,6 +39,8 @@ nginx-pod                           1/1     Running   0          136m   10.10.16
 ```
 ```
 kubectl get po -n prod-nginx -o wide --show-labels   #show pod label information
+NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES   LABELS
+nginx-pod                           1/1     Running   0          138m   10.10.162.130   kind-worker    <none>           <none>            environment=prod,name=nginx
 ```
 ### Execrcise
 - Create additional pods 
