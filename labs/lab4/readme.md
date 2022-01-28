@@ -29,7 +29,7 @@ export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].add
 ```
 curl http:///127.0.0.1:31062
 ...
-curl http://<node_ip>:31062
+curl http://$NODE:31062
 ```
 Compare the endpoints of the two services
 ```
