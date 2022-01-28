@@ -34,6 +34,8 @@ kubectl get po -A             #show all pods in all namespaces
 ```
 ```
 kubectl get po -n prod-nginx -o wide    #show additional information like POD IP address and NODE information
+NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES
+nginx-pod                           1/1     Running   0          136m   10.10.162.130   kind-worker    <none>           <none>
 ```
 ```
 kubectl get po -n prod-nginx -o wide --show-labels   #show pod label information
