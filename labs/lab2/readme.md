@@ -28,7 +28,7 @@ spec:
 EOF
 ```
 ```
-kubectl get deploy -n prod-nginx
+kubectl get deploy -n prod-nginx -o wide
 ```
 ```
 kubectl describe deploy -n prod-nginx nginx-deployment
