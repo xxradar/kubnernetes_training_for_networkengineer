@@ -28,9 +28,9 @@ EOF
 ```
 Analyse the output of kubectl with the different flags
 ```
-kubectl get po
-kubectl get po -n prod-nginx
-kubectl get po -A
+kubectl get po                #show pods in default namespace
+kubectl get po -n prod-nginx  #show pods in namespace prod-nginx
+kubectl get po -A             #show all pods in all namespaces
 ```
 ```
 kubectl get po -n prod-nginx -o wide
