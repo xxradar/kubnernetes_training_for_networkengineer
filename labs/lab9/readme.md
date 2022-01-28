@@ -2,14 +2,14 @@
 In a lab environment, you won't always have access via a load-balancer ...<br>
 Also please keep in mind the network policies that are in place, they still apply.
 
-### `kubect port-forward` is an SSH style port forwarding mechanism based on HTTP/2
+### `kubectl port-forward` is an SSH style port forwarding mechanism based on HTTP/2
 ```
 kubectl port-forward svc/my-nginx-clusterip -n dev-nginx 8888:8765 &
 ```
 ```
 curl http://127.0.0.1:8888
 ```
-### `kubect port-forward` can listen for incoming connection on --address 0.0.0.0 (allows external access)
+### `kubectl port-forward` can listen for incoming connection on --address 0.0.0.0 (allows external access)
 ```
 netstat -anpt tcp | grep 8888
 (Not all processes could be identified, non-owned process info
