@@ -53,9 +53,6 @@ kubectl cluster-info --context kind-kind
 kubectl get no
    .... 
 ```
-
-```
-
 ### Install Calico CNI
 ```
 kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
