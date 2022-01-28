@@ -2,7 +2,7 @@
 In a lab environment, you won't always have access via a load-balancer ...<br>
 Also please keep in mind the network policies that are in place, they still apply.
 
-### `kubect port-forward` is an SSH style port forwarding mechanism baSED ON HTTP/2
+### `kubect port-forward` is an SSH style port forwarding mechanism based on HTTP/2
 ```
 kubectl port-forward svc/my-nginx-clusterip -n dev-nginx 8888:8765 &
 ```
