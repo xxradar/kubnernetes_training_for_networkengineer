@@ -85,10 +85,15 @@ EOF
 kubectl get globalnetworkpolicy
 ```
 ```
+kubectl run -it --rm  --image xxradar/hackon debug -n myhackns -l mode=debug
+curl my-nginx-clusterip.prod-nginx 
+```
+```
 kubectl label ns myhackns quarantine=true
 ```
 ```
-kubectl run -it --rm -n myhackns --image xxradar/hackon debug
+kubectl run -it --rm  --image xxradar/hackon debug -n myhackns -l mode=debug
+curl my-nginx-clusterip.prod-nginx 
 ```
 
 ## LAB 8-bis Cilium cluster wide network policy example
