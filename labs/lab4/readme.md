@@ -24,6 +24,9 @@ my-nginx-nodeport    NodePort    10.107.221.36   <none>        80:31062/TCP   10
 ```
 Try to reach the NodePort
 ```
+export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].address}")
+```
+```
 curl http:///127.0.0.1:31062
 ...
 curl http://<node_ip>:31062
