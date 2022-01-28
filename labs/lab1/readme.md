@@ -33,10 +33,10 @@ kubectl get po -n prod-nginx  #show pods in namespace prod-nginx
 kubectl get po -A             #show all pods in all namespaces
 ```
 ```
-kubectl get po -n prod-nginx -o wide
+kubectl get po -n prod-nginx -o wide    #show additional information like POD IP address and NODE information
 ```
 ```
-kubectl get po -n prod-nginx -o wide --show-labels
+kubectl get po -n prod-nginx -o wide --show-labels   #show pod label information
 ```
 ### Execrcise
 - Create additional pods 
