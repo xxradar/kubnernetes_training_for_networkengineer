@@ -1,5 +1,5 @@
 ## Troubleshooting
-
+### executing commands inside pods
 ```
 kubectl get po -n prod-nginx
 ...
@@ -19,6 +19,7 @@ drwxr-xr-x   2 root root 4096 Dec 11 17:25 home
 drwxr-xr-x   1 root root 4096 Jan 25 00:00 lib
 ...
 ```
+### check the logs generated in pods
 ```
 kubectl logs -n prod-nginx nginx-deployment-77b8976db4-2n6gp
 /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
@@ -44,6 +45,8 @@ kubectl logs -n prod-nginx nginx-deployment-77b8976db4-2n6gp
 10.10.110.143 - - [28/Jan/2022:20:34:10 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/7.68.0" "-"
 10.10.110.157 - - [28/Jan/2022:20:51:33 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/7.68.0" "-"
 ...
+```
+### Creating a pod sharing the host network namespace 
 ```
 kubectl run -it --rm debug  --restart=Never --image=xxradar/hackon --overrides='{"kind":"Pod", "apiVersion":"v1", "spec": {"hostNetwork":true}}'
 If you don't see a command prompt, try pressing enter.
