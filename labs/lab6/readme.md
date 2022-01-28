@@ -1,8 +1,7 @@
 ## LAB 6 - Ingress <br>
-Checkout this repo for a detailed Ingress Lab example using a NGINX ingress controller <br>
-https://github.com/xxradar/ingress_kubernetes_workshop
 
-If you're using Rancher Desktop, ingress is implemented via Traefik.<br>
+### Rancher Desktop
+If you're using `Rancher Desktop`, ingress is implemented via Traefik.<br>
 Verify the service node ports.
 ```
 kubectl get svc -n kube-system   traefik
@@ -89,4 +88,42 @@ Check carefully the TLS handshake.
 ```
 curl -kv  -H "Host: tlsapp1.dockersec.me" https://tlsapp1.dockersec.me:$SECUREWEB
 curl -kv  -H "Host: tlsapp1.dockersec.me" https://localhost:$SECUREWEB
+```
+### `KIND` cluster ingress
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/baremetal/deploy.yaml
+```
+```
+$ kubectl get svc -n ingress-nginx
+NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+ingress-nginx-controller             NodePort    10.11.22.255   <none>        80:32060/TCP,443:30340/TCP   8m53s
+ingress-nginx-controller-admission   ClusterIP   10.11.22.36    <none>        443/TCP                      8m53s
+```
+```
+export SECUREWEB=$(kubectl get svc ingress-nginx-controller -n ingress-nginx  -n ingress-nginx -o=jsonpath="{.spec.ports[?(@.port==443)].nodePort}")
+export WEB=$(kubectl get svc ingress-nginx-controller -n ingress-nginx  -n ingress-nginx -o=jsonpath="{.spec.ports[?(@.port==80)].nodePort}")
+echo $WEB
+echo $SECUREWEB 
+```
+```
+curl -kv http://localhost:$WEB  #change the portnumber according kubectl svc -n ingress-nginx
+curl -kv https://localhost:$SECUREWEB  #change the portnumber according kubectl svc -n ingress-nginx
+```
+Let's create an ingress resource for HTTP
+
+```
+kubectl apply -n prod-nginx -f - <<EOF
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app1-ingress
+spec:
+  rules:
+  - host: app1.dockerhack.me
+    http:
+      paths:
+      - backend:
+          serviceName: my-nginx-clusterip
+          servicePort: 80
+EOF
 ```
