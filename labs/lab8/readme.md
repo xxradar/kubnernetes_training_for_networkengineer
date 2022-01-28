@@ -88,3 +88,22 @@ kubectl label ns myhackns quarantine=true
 kubectl run -it --rm -n myhackns --image xxradar/hackon debug
 ```
 
+## LAB 8-bis
+```
+kubectl apply -f -<<EOF
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: "quarantine"
+spec:
+  endpointSelector:
+    matchLabels:
+      quarantine: "true"
+  ingressDeny:
+  - fromEntities:
+    - "world"
+  ingress:
+  - fromEntities:
+    - "all"
+EOF
+```
