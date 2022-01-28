@@ -48,7 +48,8 @@ kubectl logs -n prod-nginx nginx-deployment-77b8976db4-2n6gp
 ```
 ### Creating a pod sharing the host network namespace 
 ```
-kubectl run -it --rm debug  --restart=Never --image=xxradar/hackon --overrides='{"kind":"Pod", "apiVersion":"v1", "spec": {"hostNetwork":true}}'
+kubectl run -it --rm debug  --restart=Never --image=xxradar/hackon \
+      --overrides='{"kind":"Pod", "apiVersion":"v1", "spec": {"hostNetwork":true}}'
 If you don't see a command prompt, try pressing enter.
 root@kind-worker2:/#
 ...
