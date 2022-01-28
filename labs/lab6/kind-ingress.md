@@ -1,5 +1,4 @@
 ## LAB 6 - Ingress <br>
-(KIND Cluster NGINX INGRESS -- see below)
 ### `KIND` cluster ingress
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/baremetal/deploy.yaml
