@@ -37,7 +37,11 @@ curl my-nginx-clusterip
 curl <pod_ip>
 ...
 ```
-Fix the DNS resolving
+Fix the DNS resolving <br>
+If required (depending on cluster initialisation)
+```
+kubectl label ns kube-system kubernetes.io/metadata.name=kube-system
+```
 ```
 kubectl apply -n prod-nginx -f - <<EOF
 apiVersion: networking.k8s.io/v1
