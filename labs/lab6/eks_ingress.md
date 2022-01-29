@@ -87,6 +87,6 @@ Add to /etc/hosts
 ```
 Check carefully the TLS handshake.
 ```
-curl -kv  -H "Host: tlsapp1.dockersec.me" https://tlsapp1.dockersec.me:$SECUREWEB
+curl -kv  -H "Host: tlsapp1.dockersec.me" https://tlsapp1.dockersec.me
 curl -kv  -H "Host: tlsapp1.dockersec.me" https://$NODE
 ```
