@@ -52,5 +52,5 @@ kubectl get daemonset calico-node --namespace calico-system
 ```
 ### Deleting the EKS cluster
 ```
-eksctl delete cluster --name training-cluster
+eksctl delete cluster --name training-cluster --region eu-central-1
 ```
