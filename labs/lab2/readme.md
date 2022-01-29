@@ -93,7 +93,7 @@ kubectl run  -n prod-nginx --image nginx -l app=nginx,env=prod,pod-template-hash
  ```
  Try to delete a pod from the deployment. What happens?
  ```
- kubectl delete po -n prod-nginx <your_rs>s
+ kubectl delete po -n prod-nginx <your_rs>
  ```
  Try to scale the deployment, what happens?
  ```
