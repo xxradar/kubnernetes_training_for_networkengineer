@@ -82,7 +82,7 @@ Check the POD labels
 ```
 kubectl get po -n prod-nginx -o wide --show-labels
 ```
-Try to add a pod, what happens ?
+Try to add a pod, what happens ? (verify and change the `pod-template-hash`)
 ```
 kubectl run  -n prod-nginx --image nginx -l app=nginx,env=prod,pod-template-hash=7848d4b86f testnginx
  ```
