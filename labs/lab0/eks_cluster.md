@@ -41,3 +41,13 @@ This may take a while (15min). Verify the cluster to see everything is `Ready`
 ```
 kubectl get no -o wide
 ```
+### Installing support for Calico Network Security policies
+```
+kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/master/calico-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/master/calico-crs.yaml
+```
+Check if everything is ready ...
+```
+kubectl get daemonset calico-node --namespace calico-system
+```
+```
