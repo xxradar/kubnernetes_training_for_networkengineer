@@ -1,4 +1,5 @@
-### Update Ubuntu server
+
+### Update Ubuntu server (ex. EC2 instance - t2.xlarge - pulic)
 ```
 sudo apt-get update
 sudo apt-get install -y \
