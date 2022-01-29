@@ -5,3 +5,4 @@ Installing and configuring Ingress Controllers is typically an example where thi
 
 * [Rancher Desktop - Ingress based on Traefik](rancherdesktop.md)
 * [Kind -  Ingress based on nginx](kind-ingress.md)
+* [EKS -  Ingress based on nginx](eks_ingress.md)
