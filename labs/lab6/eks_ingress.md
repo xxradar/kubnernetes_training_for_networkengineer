@@ -1,5 +1,5 @@
 ## LAB 6 - Ingress <br>
-### EKS - Nginx ingress
+### Install NGIX Ingress controller
 ```
 wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml
 ```
@@ -16,7 +16,7 @@ export NODE=a62334251f0114b9aaf34d86202c2882-40e81f7ab83cdc16.elb.eu-central-1.a
 curl -kv http://$NODE:80  #change the portnumber according kubectl svc -n ingress-nginx
 curl -kv https://$NODE:443  #change the portnumber according kubectl svc -n ingress-nginx
 ```
-Let's create an ingress resource for HTTP
+### Create an ingress resource for HTTP
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
@@ -47,6 +47,8 @@ curl -kv http://$NODE:80
 ...
 curl -kv  -H "Host: app1.dockersec.me" http://$NODE:80
 ```
+### Create an ingress resource for HTTPS
+
 In order to enable TLS, we need to create a certificate.
 ```
 openssl req -x509 -newkey rsa:2048 -keyout tls.key -out tls.crt -days 365 -nodes -subj "/CN=tlsapp1.dockersec.me"
