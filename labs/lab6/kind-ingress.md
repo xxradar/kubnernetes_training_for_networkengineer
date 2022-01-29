@@ -1,5 +1,5 @@
 ## LAB 6 - Ingress <br>
-### Nginx ingress
+### KIND - Nginx ingress
 ```
 For KIND:
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/baremetal/deploy.yaml
