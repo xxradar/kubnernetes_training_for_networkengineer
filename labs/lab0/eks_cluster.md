@@ -23,7 +23,7 @@ cat >cluster.yaml <<EOF
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 metadata:
-  name: learnk8s-cluster
+  name: training-cluster
   region: eu-central-1
 nodeGroups:
   - name: worker-group
@@ -50,4 +50,7 @@ Check if everything is ready ...
 ```
 kubectl get daemonset calico-node --namespace calico-system
 ```
+### Deleting the EKS cluster
+```
+eksctl delete cluster --name training-cluster
 ```
