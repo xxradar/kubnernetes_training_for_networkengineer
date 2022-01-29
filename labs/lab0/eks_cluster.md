@@ -27,7 +27,7 @@ metadata:
   region: eu-central-1
 nodeGroups:
   - name: worker-group
-    instanceType: t2.micro
+    instanceType: t2.xlarge
     desiredCapacity: 3
     minSize: 3
     maxSize: 5
