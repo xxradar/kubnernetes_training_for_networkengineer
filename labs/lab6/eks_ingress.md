@@ -24,14 +24,21 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app1-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: "nginx"
   rules:
   - host: app1.dockersec.me
     http:
       paths:
-      - backend:
-          serviceName: my-nginx-clusterip
-          servicePort: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-nginx-clusterip
+            port:
+              number: 80
 EOF
 ```
 Verify access
