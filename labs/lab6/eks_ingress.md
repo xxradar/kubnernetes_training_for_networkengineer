@@ -1,10 +1,6 @@
 ## LAB 6 - Ingress <br>
-### KIND - Nginx ingress
+### EKS - Nginx ingress
 ```
-For KIND:
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/baremetal/deploy.yaml
-
-For EKS:
 wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml
 ```
 ```
@@ -30,7 +26,7 @@ Let's create an ingress resource for HTTP
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Ingress
 metadata:
   name: app1-ingress
@@ -59,7 +55,7 @@ kubectl describe secret -n prod-nginx tlscertsapp1
 Create an ingress resource for HTTPS
 ```
 kubectl apply -n prod-nginx -f - <<EOF
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tls-example-ingress
