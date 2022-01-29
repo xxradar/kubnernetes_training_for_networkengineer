@@ -1,4 +1,5 @@
 ### Install calicoctl
+The verion must match the version of calico currently installed
 ```
 curl -o calicoctl -O -L  "https://github.com/projectcalico/calicoctl/releases/download/v3.20.0/calicoctl"
 chmod +x calicoctl
@@ -17,5 +18,4 @@ metadata:
 spec:
   datastoreType: "kubernetes"
   kubeconfig: "/home/ubuntu/.kube/config"
-
 ```
