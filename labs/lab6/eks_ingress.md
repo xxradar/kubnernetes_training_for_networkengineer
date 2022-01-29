@@ -4,23 +4,17 @@
 wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml
 ```
 ```
-$ kubectl get svc -n ingress-nginx
-NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
-ingress-nginx-controller             NodePort    10.11.22.255   <none>        80:32060/TCP,443:30340/TCP   8m53s
-ingress-nginx-controller-admission   ClusterIP   10.11.22.36    <none>        443/TCP                      8m53s
+kubectl get svc -n ingress-nginx
+NAME                                 TYPE           CLUSTER-IP       EXTERNAL-IP                                                                        PORT(S)                      AGE
+ingress-nginx-controller             LoadBalancer   10.100.85.87     a62334251f0114b9aaf34d86202c2882-40e81f7ab83cdc16.elb.eu-central-1.amazonaws.com   80:31384/TCP,443:32434/TCP   9m23s
+ingress-nginx-controller-admission   ClusterIP      10.100.148.204   <none>                                                                             443/TCP                      9m23s
 ```
 ```
-export SECUREWEB=$(kubectl get svc ingress-nginx-controller -n ingress-nginx  -n ingress-nginx -o=jsonpath="{.spec.ports[?(@.port==443)].nodePort}")
-export WEB=$(kubectl get svc ingress-nginx-controller -n ingress-nginx  -n ingress-nginx -o=jsonpath="{.spec.ports[?(@.port==80)].nodePort}")
-export WEB=$(kubectl get svc ingress-nginx-controller -n ingress-nginx  -n ingress-nginx -o=jsonpath="{.spec.ports[?(@.port==80)].nodePort}")
-export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].address}")
-echo $WEB
-echo $SECUREWEB 
-echo $NODE
+export NODE=a62334251f0114b9aaf34d86202c2882-40e81f7ab83cdc16.elb.eu-central-1.amazonaws.com
 ```
 ```
-curl -kv http://$NODE:$WEB  #change the portnumber according kubectl svc -n ingress-nginx
-curl -kv https://$NODE:$SECUREWEB  #change the portnumber according kubectl svc -n ingress-nginx
+curl -kv http://$NODE:80  #change the portnumber according kubectl svc -n ingress-nginx
+curl -kv https://$NODE:443  #change the portnumber according kubectl svc -n ingress-nginx
 ```
 Let's create an ingress resource for HTTP
 
