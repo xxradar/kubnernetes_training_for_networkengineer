@@ -92,7 +92,7 @@ rm cilium-linux-amd64.tar.gz{,.sha256sum}
 ```
 cilium status --wait
 cilium connectivity test
-cilium hubble enable
+cilium hubble enable -ui
 ```
 ```
 cilium hubble port-forward&
