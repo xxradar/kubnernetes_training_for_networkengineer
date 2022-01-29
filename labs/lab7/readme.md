@@ -38,7 +38,7 @@ curl <a_prod-nginx_pod_ip>
 ...
 ```
 Fix the DNS resolving <br>
-If required (depending on cluster initialisation)
+If required (depending on cluster initialisation) label the `kube-system` namespace
 ```
 kubectl label ns kube-system kubernetes.io/metadata.name=kube-system
 ```
