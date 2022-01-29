@@ -45,7 +45,7 @@ Verify access
 ```
 curl -kv http://$NODE:80
 ...
-curl -kv  -H "Host: app1.dockersec.me" http://$NODE:443
+curl -kv  -H "Host: app1.dockersec.me" http://$NODE:80
 ```
 In order to enable TLS, we need to create a certificate.
 ```
@@ -61,6 +61,7 @@ kind: Ingress
 metadata:
   name: tls-example-ingress
 spec:
+  ingressClassName: "nginx"
   tls:
   - hosts:
       - tlsapp1.dockersec.me
@@ -87,5 +88,5 @@ Add to /etc/hosts
 Check carefully the TLS handshake.
 ```
 curl -kv  -H "Host: tlsapp1.dockersec.me" https://tlsapp1.dockersec.me:$SECUREWEB
-curl -kv  -H "Host: tlsapp1.dockersec.me" https://$NODE:$SECUREWEB
+curl -kv  -H "Host: tlsapp1.dockersec.me" https://$NODE
 ```
