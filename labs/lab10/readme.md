@@ -84,6 +84,7 @@ root@kind-worker2:/# ip a
        valid_lft forever preferred_lft forever
 ...
 ```
+
 ```
 root@kind-worker2:/# tcpdump -i any -n
 21:42:26.770551 IP 172.18.0.3.37542 > 172.18.0.5.10250: Flags [.], ack 541207, win 501, options [nop,nop,TS val 1037616719 ecr 3538320227], length 0
