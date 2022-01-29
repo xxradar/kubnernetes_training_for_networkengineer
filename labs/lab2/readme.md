@@ -73,7 +73,7 @@ Events:
 kubectl get rs -n prod-nginx 
 ```
 ```
-kubectl describe  rs -n prod-nginx nginx-deployment-7848d4b86f
+kubectl describe  rs -n prod-nginx <your_rs>
 ```
  
  
@@ -88,19 +88,19 @@ kubectl run  -n prod-nginx --image nginx -l app=nginx,env=prod,pod-template-hash
  ```
  Check the replication set again ...
  ```
- kubectl describe rs -n prod-nginx nginx-deployment-7848d4b86f
+ kubectl describe rs -n prod-nginx <your_rs>
  ...
  ```
  Try to delete a pod from the deployment. What happens?
  ```
- kubectl delete po -n prod-nginx nginx-deployment-755b69f8f9-m9lqs
+ kubectl delete po -n prod-nginx <your_rs>s
  ```
  Try to scale the deployment, what happens?
  ```
  kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment
  ```
  ```
- kubectl describe rs -n prod-nginx nginx-deployment-7848d4b86f
+ kubectl describe rs -n prod-nginx <your_rs>
  ```
  ### Exercise
  - delete some pods from the deployment
