@@ -136,3 +136,7 @@ Jan 29 14:47:46.062: 10.10.0.180:4240 <> 10.10.2.226:43864 to-overlay FORWARDED 
 Jan 29 14:47:46.063: 10.10.2.226:43864 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:49.134: 10.10.0.103:37572 <- 10.10.0.180:4240 to-stack FORWARDED (TCP Flags: ACK)
 ```
+
+```
+kubectl port-forward -n kube-system svc/hubble-ui --address 0.0.0.0 --address :: 12000:80
+```
