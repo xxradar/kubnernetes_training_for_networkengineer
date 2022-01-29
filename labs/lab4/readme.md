@@ -26,6 +26,7 @@ Try to reach the NodePort
 ```
 export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].address}")
 ```
+Note: EKS labs should use th eexternal public IP of a node and open the necessary ports on the securitygroups.
 ```
 curl http:///127.0.0.1:31062
 ...
