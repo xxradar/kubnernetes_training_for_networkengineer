@@ -1,5 +1,5 @@
 ## Lab 8 - Calico global network policy example
-_Note: this will not work on EKS. For EKS you must install the correct version of calicoctl [install calicoctl](calicoctl.md)_
+_Note: this will not work on EKS. For EKS you must install the correct version of calicoctl [install calicoctl](calicoctl.md). To apply the policies use calicoctl instead of kubectl_
 ```
 kubectl apply -f - <<EOF
 apiVersion: projectcalico.org/v3
