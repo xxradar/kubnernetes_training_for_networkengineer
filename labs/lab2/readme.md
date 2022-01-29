@@ -82,7 +82,7 @@ Check the POD labels
 ```
 kubectl get po -n prod-nginx -o wide --show-labels
 ```
-Try to add a pod 
+Try to add a pod, what happens ?
 ```
 kubectl run  -n prod-nginx --image nginx -l app=nginx,env=prod,pod-template-hash=7848d4b86f testnginx
  ```
@@ -91,10 +91,14 @@ kubectl run  -n prod-nginx --image nginx -l app=nginx,env=prod,pod-template-hash
  kubectl describe rs -n prod-nginx nginx-deployment-7848d4b86f
  ...
  ```
+ Try to delete a pod from the deployment. What happens?
+ ```
+ kubectl delete po -n prod-nginx nginx-deployment-755b69f8f9-m9lqs
+ ```
+ Try to scale the deployment, what happens?
  ```
  kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment
  ```
- 
  ```
  kubectl describe rs -n prod-nginx nginx-deployment-7848d4b86f
  ```
