@@ -27,6 +27,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: "nginx"
   rules:
   - host: app1.dockersec.me
     http:
@@ -42,9 +43,9 @@ EOF
 ```
 Verify access
 ```
-curl -kv http://$NODE:$WEB
+curl -kv http://$NODE:80
 ...
-curl -kv  -H "Host: app1.dockersec.me" http://$NODE:$WEB
+curl -kv  -H "Host: app1.dockersec.me" http://$NODE:443
 ```
 In order to enable TLS, we need to create a certificate.
 ```
