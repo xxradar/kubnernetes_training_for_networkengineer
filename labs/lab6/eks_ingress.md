@@ -55,6 +55,7 @@ kubectl describe secret -n prod-nginx tlscertsapp1
 ```
 Create an ingress resource for HTTPS
 ```
+kubectl apply -n prod-nginx -f - <<EOF
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -78,6 +79,7 @@ spec:
             name: my-nginx-clusterip
             port:
               number: 80
+EOF
 ```
 ```
 kubectl get ingress -n prod-nginx
