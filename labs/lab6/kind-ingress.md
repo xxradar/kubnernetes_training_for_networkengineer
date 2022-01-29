@@ -1,11 +1,7 @@
 ## LAB 6 - Ingress <br>
 ### KIND - Nginx ingress
 ```
-For KIND:
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/baremetal/deploy.yaml
-
-For EKS:
-wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml
 ```
 ```
 $ kubectl get svc -n ingress-nginx
