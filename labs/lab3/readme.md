@@ -19,6 +19,9 @@ EOF
 kubectl get svc -n prod-nginx -o wide
 ```
 ```
+kubectl describe svc -n prod-nginx  my-nginx-clusterip
+```
+```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
 ```
 
