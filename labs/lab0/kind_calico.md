@@ -13,7 +13,7 @@ sudo apt-get install -y \
 ```
 curl https://get.docker.com | bash
 sudo usermod -aG docker $USER
-# (logout and login agian)
+# (logout and login again)
 ```
 ### Fix bug in kind
 ```
