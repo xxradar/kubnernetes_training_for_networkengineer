@@ -31,6 +31,9 @@ EOF
 kubectl get deploy -n prod-nginx -o wide
 ```
 ```
+kubectl get po -n prod-nignx -o wide
+```
+```
 kubectl describe deploy -n prod-nginx nginx-deployment
 ```
 ```
