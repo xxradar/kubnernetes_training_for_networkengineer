@@ -113,6 +113,26 @@ rm hubble-linux-amd64.tar.gz{,.sha256sum}
 cilium hubble port-forward&
 ```
 ```
-hubble status
-hubble observe
+$ hubble status
+Healthcheck (via localhost:4245): Ok
+Current/Max Flows: 0/0
+Flows/s: N/A
+Connected Nodes: 0/4
+Unavailable Nodes: 4
+  - kind-control-plane
+  - kind-worker
+  - kind-worker2
+  - kind-worker3hubble observe
+```
+```
+$ hubble observe
+Jan 29 14:47:36.330: 10.10.0.103:33058 <> 10.10.1.88:4240 to-overlay FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:36.330: 10.10.0.103:43218 <> 10.10.2.243:4240 to-overlay FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:41.454: 10.10.0.180:4240 <> 10.10.1.221:58542 to-overlay FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:41.455: 10.10.1.221:58542 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:44.267: 10.10.0.180:4240 <> 10.10.3.12:56052 to-overlay FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:44.267: 10.10.3.12:56052 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:46.062: 10.10.0.180:4240 <> 10.10.2.226:43864 to-overlay FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:46.063: 10.10.2.226:43864 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:49.134: 10.10.0.103:37572 <- 10.10.0.180:4240 to-stack FORWARDED (TCP Flags: ACK)
 ```
