@@ -20,7 +20,7 @@ Let's create an ingress resource for HTTP
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
-apiVersion: extensions/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app1-ingress
