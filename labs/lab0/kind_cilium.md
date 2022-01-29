@@ -91,10 +91,28 @@ rm cilium-linux-amd64.tar.gz{,.sha256sum}
 ```
 ```
 cilium status --wait
-cilium connectivity test
-cilium hubble enable --ui
+cilium connectivity test #optional
+```
+
+### Install Cilium observablity
+```
+helm upgrade cilium cilium/cilium --version 1.11.1 \
+   --namespace kube-system \
+   --reuse-values \
+   --set hubble.relay.enabled=true \
+   --set hubble.ui.enabled=true
+```
+```
+export HUBBLE_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/hubble/master/stable.txt)
+curl -L --remote-name-all https://github.com/cilium/hubble/releases/download/$HUBBLE_VERSION/hubble-linux-amd64.tar.gz{,.sha256sum}
+sha256sum --check hubble-linux-amd64.tar.gz.sha256sum
+sudo tar xzvfC hubble-linux-amd64.tar.gz /usr/local/bin
+rm hubble-linux-amd64.tar.gz{,.sha256sum}
 ```
 ```
 cilium hubble port-forward&
-cilium oberserve 
+```
+```
+hubble status
+hubble observe
 ```
