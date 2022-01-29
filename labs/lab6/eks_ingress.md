@@ -83,7 +83,7 @@ Update your hostfile !!!
 
 ```
 Add to /etc/hosts
-<NODE_ADDRESS> tlsapp1.dockersec.me
+<LB_ADDRESS> tlsapp1.dockersec.me
 ```
 Check carefully the TLS handshake.
 ```
