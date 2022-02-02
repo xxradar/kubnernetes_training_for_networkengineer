@@ -57,6 +57,7 @@ To find the token
  SECRET=$(kubectl get sa fortigateconnector -o jsonpath='{.secrets[0].name}')
  kubectl get  secret $SECRET -o jsonpath='{.data.token}' | base64 --decode
 ```
+It should look like this ...
 ```
 eyJhbGciOiJSUzI1NiIsImtpZCI6ImJfMVV5ZFpsbThxMGgyQWV5UW4wYXM2cXFDQ05PYVZsSDA4YU1EOWVMMEUifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImZvcnRpZ2F0ZWNvbm5lY3Rvci10b2tlbi1mcm1yayIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJmb3J0aWdhdGVjb25uZWN0b3IiLCJrdWJlcm5ldGVhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIxNjg3YjUxMC0yZDk5LTQ4NzEtYWRhMS0xMzA5NTE0OTQwZjQiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6ZGVmYXVsdDpmb3J0aWdhdGVjb25uZWN0b3IifQ.hyWHnEQ3Mewb_zkCRJBkOVwf1bVO4oHQanqIXXZU38bNsi5j4p3SKzQFpzA4bywGKFYiRZ1TS9f1twTIVZJpOErQedr4m6tPfTMO8Md8r6d-nCewfd_eGlG7Mt9sS2GGU8DxpjwnsAgUtynIEZj1TWRpYQGSgFdKANanBbVCqei7uc8phaGyi82DqBsEZr1HjhlyXTPEh-MvLEjWm2NhC0Zhg75KCF_wged7SZoa9spSCJqIVT20_ykKVdqaF4dydBw2HRR8ssaNN4uLz4eB-Gskt3o-ME3ecE6sHK8OIO7nBYF0pLqrR0217If-NXcENL-sCC1VZ-w
 ```
@@ -66,6 +67,7 @@ eyJhbGciOiJSUzI1NiIsImtpZCI6ImJfMVV5ZFpsbThxMGgyQWV5UW4wYXM2cXFDQ05PYVZsSDA4YU1E
 kubectl get  secret $SECRET -o jsonpath='{.data.ca\.crt}' | base64 --decode >ca.crt
 cat ca.crt
 ```
+It should look like this ...
 ```
 -----BEGIN CERTIFICATE-----
 MIIC/jCCAeagAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl
