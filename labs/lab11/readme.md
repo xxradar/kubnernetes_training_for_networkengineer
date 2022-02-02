@@ -48,7 +48,10 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 or
 ```
 CONTEXT=$(kubectl config view -o jsonpath='{.current-context}')
-kubectl config view -o jsonpath='{.clusters[0].cluster.server}'
+kubectl config view -o jsonpath='{.clusters[?(@.name=="'$CONTEXT'")].cluster.server}'
+
+## should work if you only have access to a single cluster
+kubectl config view -o jsonpath='{.clusters[0].cluster.server}'  
 ```
 ```
 https://10.1.2.12:6443
