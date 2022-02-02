@@ -47,6 +47,7 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
 or
 ```
+CONTEXT=$(kubectl config view -o jsonpath='{.current-context}')
 kubectl config view -o jsonpath='{.clusters[0].cluster.server}'
 ```
 ```
