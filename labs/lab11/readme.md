@@ -49,6 +49,9 @@ or
 ```
 kubectl config view -o jsonpath='{.clusters[0].cluster.server}'
 ```
+https://10.1.2.12:6443
+```
+```
 ### Extract the token
 Tokens are store in secrets. Tokens are encoded (not encrypted)
 
