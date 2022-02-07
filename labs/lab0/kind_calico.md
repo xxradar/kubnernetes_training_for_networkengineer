@@ -55,6 +55,12 @@ kubectl cluster-info --context kind-kind
 kubectl get no
    .... 
 ```
+Check if all pods are `running` or `pending`
+```
+kubectl get po -A
+```
+If you experience crashes, it is because of the bug in `kind`. Contact your instructor.
+
 ### Install Calico CNI
 ```
 kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
