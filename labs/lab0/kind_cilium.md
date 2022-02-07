@@ -18,7 +18,7 @@ sudo usermod -aG docker $USER
 ```
 ### Fix bug in kind
 ```
-sudo sysctl net/netfilter/nf_conntrack_max=131072
+sudo sysctl net/netfilter/nf_conntrack_max=262144
 ```
 ### Install K8S tooling
 ```
