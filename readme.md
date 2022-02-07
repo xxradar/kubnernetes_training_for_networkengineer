@@ -12,6 +12,4 @@
 * [Global network security policies - Lab8](labs/lab8)
 * [Accessing kubernetes services when things get though - Lab9](labs/lab9)
 * [Troubleshooting - Lab10](labs/lab10)
-
-
-
+* [Fortinet K8S SDN connector - Lab11](labs/lab11)
