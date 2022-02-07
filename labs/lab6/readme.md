@@ -4,5 +4,6 @@ Different verions of kubernetes, typically have changed, updated or promoted API
 Installing and configuring Ingress Controllers is typically an example where this problem is very visible.
 
 * [Rancher Desktop - Ingress based on Traefik](rancherdesktop.md)
-* [Kind -  Ingress based on nginx](kind-ingress-v1.18.md)
+* [Kind -  Ingress based on nginx v1.18](kind-ingress-v1.18.md)
+* [Kind -  Ingress based on nginx v1.18](kind-ingress-v1.21.md)
 * [EKS -  Ingress based on nginx](eks_ingress.md)
