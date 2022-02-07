@@ -28,7 +28,8 @@ kubectl version --short --client
 ```
 ### Create a K8S cluster with kind
 ```
-sudo curl -L "https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64" -o /usr/local/bin/kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+sudo mv ./kind /usr/local/bin/kind
 sudo chmod +x /usr/local/bin/kind
 kind get clusters
 ```
