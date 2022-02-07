@@ -1,7 +1,7 @@
 ## LAB 6 - Ingress <br>
 ### KIND - Nginx ingress - K8S v1.18
 ```
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/baremetal/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/baremetal/deploy.yaml
 ```
 ```
 $ kubectl get svc -n ingress-nginx
@@ -26,18 +26,25 @@ Let's create an ingress resource for HTTP
 
 ```
 kubectl apply -n prod-nginx -f - <<EOF
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app1-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: "nginx"
   rules:
   - host: app1.dockersec.me
     http:
       paths:
-      - backend:
-          serviceName: my-nginx-clusterip
-          servicePort: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-nginx-clusterip
+            port:
+              number: 80
 EOF
 ```
 Verify access
@@ -55,11 +62,14 @@ kubectl describe secret -n prod-nginx tlscertsapp1
 Create an ingress resource for HTTPS
 ```
 kubectl apply -n prod-nginx -f - <<EOF
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tls-example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: "nginx"
   tls:
   - hosts:
       - tlsapp1.dockersec.me
@@ -69,9 +79,12 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: my-nginx-clusterip
-          servicePort: 80
+          service:
+            name: my-nginx-clusterip
+            port:
+              number: 80
 EOF
 ```
 ```
