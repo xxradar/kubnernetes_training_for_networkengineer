@@ -55,7 +55,11 @@ kubectl cluster-info --context kind-kind
 kubectl get no
    .... 
 ```
-
+Check if all pods are `running` or `pending`
+```
+kubectl get po -A
+```
+If you experience crashes, it is because of the bug in `kind`. Contact your instructor.
 ### Install HELM
 ```
 curl https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz -o helm-v3.8.0-linux-amd64.tar.gz
