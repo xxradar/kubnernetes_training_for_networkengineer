@@ -59,10 +59,10 @@ kubectl get no
 ```
 kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
 ```
-Adjust the pod cidr in custom-resources.yaml to 10.10.0.0/16
 ```
 wget https://docs.projectcalico.org/manifests/custom-resources.yaml
 ```
+Adjust the ippools cidr in `custom-resources.yaml` to match the podSubnet 10.10.0.0/16.
 ```
 vi  custom-resources.yaml 
 ...
