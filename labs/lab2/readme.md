@@ -102,6 +102,7 @@ kubectl run  -n prod-nginx --image nginx -l app=nginx,env=prod,pod-template-hash
  ```
  kubectl describe rs -n prod-nginx <your_rs>
  ```
- ### Exercise
+ 
+### Exercise
  - delete some pods from the deployment
  - check the if the pods come back? What about IP addresses ?
