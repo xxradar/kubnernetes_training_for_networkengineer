@@ -1,7 +1,27 @@
 ## LAB 5
 This lab assumes your K8S can spin up a LoadBalancer. When you're using a managed K8S cluster, this should work as explained. Self-managed clusters do not have an integrated external load balancer configured by default. If you feel up to it, you can use the instructions to configure [MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/) with Kind. You need to carefullty check the Docker IPAM range and update the MetalLB configmap.<br>
 
-Create a service of type LoadBalancer 
+Create the metallb namespace
+```
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/namespace.yaml
+```
+Create the memberlist secrets
+```
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
+```
+Apply metallb manifest
+```
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
+```
+Wait for metallb pods to have a status of Running
+```
+kubectl get pods -n metallb-system --watch
+```
+
+
+
+
+### Create a service of type LoadBalancer 
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
