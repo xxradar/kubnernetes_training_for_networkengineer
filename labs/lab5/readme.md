@@ -18,7 +18,7 @@ Wait for metallb pods to have a status of Running
 ```
 kubectl get pods -n metallb-system --watch
 ```
-check the Docker IPAM range in use
+Check the Docker IPAM range in use
 ```
 docker network inspect -f '{{.IPAM.Config}}' kind
 ```
