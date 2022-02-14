@@ -22,7 +22,7 @@ Check the Docker IPAM range in use
 ```
 docker network inspect -f '{{.IPAM.Config}}' kind
 ```
-Create the MetalLB configmap
+Create the MetalLB configmap and match the addresses with the docker IPAM range network.
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
