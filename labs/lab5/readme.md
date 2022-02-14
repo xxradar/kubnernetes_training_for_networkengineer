@@ -1,5 +1,5 @@
 ## LAB 5
-This lab assumes your K8S can spin up a LoadBalancer. When you're using a managed K8S cluster, this should work as explained. Self-managed clusters do not have an integrated external load balancer configured by default. If you feel up to it, you can use the instructions [](https://kind.sigs.k8s.io/docs/user/loadbalancer/) to configure MetalLB with Kind. You need to carefullty check the Docker IPAM range and update the MetalLB configmap.<br>
+This lab assumes your K8S can spin up a LoadBalancer. When you're using a managed K8S cluster, this should work as explained. Self-managed clusters do not have an integrated external load balancer configured by default. If you feel up to it, you can use the instructions to configure [MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/) with Kind. You need to carefullty check the Docker IPAM range and update the MetalLB configmap.<br>
 
 Create a service of type LoadBalancer 
 ```
