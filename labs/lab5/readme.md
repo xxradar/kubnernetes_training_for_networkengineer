@@ -39,7 +39,8 @@ data:
       - 172.18.255.200-172.18.255.250
 EOF
 ```
-You can access the LoadBalancer IP from your lab host. If you want to make it accissible to the outside world on a KIND cluster, you must add some IPtables rules.
+You can access the LoadBalancer IP from your lab host. <br>
+If you want to make it accissible to the outside world on a KIND cluster, you must add some IPtables rules.
 ```
 sudo iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 80 -j DNAT --to-destination 172.18.255.200:80
 sudo iptables -A FORWARD -p tcp -d 172.18.255.200 --dport 80 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
