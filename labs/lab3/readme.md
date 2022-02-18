@@ -50,6 +50,7 @@ kubectl create ns myhackns
 ```
 kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
 ```
+From inside the pod
 ```
 curl <a_prod-nginx_pod_ip>
 ...
