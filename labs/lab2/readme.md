@@ -105,4 +105,4 @@ kubectl run  -n prod-nginx --image nginx testnginx -l app=nginx,env=prod,pod-tem
  
 ### Exercise
  - delete some pods from the deployment
- - check the if the pods come back? What about IP addresses ?
+ - check if the pods come back? What about IP addresses ?
