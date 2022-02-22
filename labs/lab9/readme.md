@@ -9,7 +9,6 @@ kubectl port-forward svc/my-nginx-clusterip -n dev-nginx 8888:8765 &
 ```
 curl http://127.0.0.1:8888
 ```
-#### `kubectl port-forward` can listen for incoming connection on `--address 0.0.0.0` (allows external access)
 ```
 netstat -anpt tcp | grep 8888
 (Not all processes could be identified, non-owned process info
@@ -17,7 +16,7 @@ netstat -anpt tcp | grep 8888
 tcp        0      0 127.0.0.1:8888          0.0.0.0:*               LISTEN      429505/kubectl
 tcp6       0      0 ::1:8888                :::*                    LISTEN      429505/kubectl
 ```
-
+#### `kubectl port-forward` can listen for incoming connection on `--address 0.0.0.0` (allows external access)
 ```
 kubectl port-forward svc/my-nginx-clusterip -n dev-nginx --address 0.0.0.0 8890:8765 &
 ```
