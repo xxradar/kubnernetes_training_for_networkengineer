@@ -1,5 +1,12 @@
-### Update Ubuntu server (ex. EC2 instance - t2.xlarge - pulic)
-
+### Update Ubuntu server
+### Prerequisites
+```
+EC2 instance
+t2.xlarge
+public ip 
+40G of storage
+```
+### Update Ubuntu server 
 ```
 sudo apt-get update
 sudo apt-get install -y \
