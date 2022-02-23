@@ -1,5 +1,13 @@
-
-### Update Ubuntu server (ex. EC2 instance - t2.xlarge - pulic)
+### Prerequisites
+```
+EC2 instance
+t2.xlarge
+ubuntu-focal-20.04-amd64-server
+public ip 
+40G of storage
+SSH access
+```
+### Update Ubuntu server 
 ```
 sudo apt-get update
 sudo apt-get install -y \
