@@ -2,7 +2,7 @@
 ```
 EC2 instance
 t2.xlarge
-Ubuntu 20.04
+ubuntu-focal-20.04-amd64-server
 public ip 
 40G of storage
 SSH access
