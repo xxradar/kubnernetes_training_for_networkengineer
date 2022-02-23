@@ -73,7 +73,7 @@ Adjust the ippools cidr in `custom-resources.yaml` to match the podSubnet `10.10
 vi  custom-resources.yaml 
 ...
 ```
-It should look like this
+It should look like this. This is where you can configure Calico CNI installation parameters.
 ```
 # This section includes base Calico installation configuration.
 # For more information, see: https://projectcalico.docs.tigera.io/v3.22/reference/installation/api#operator.tigera.io/v1.Installation
