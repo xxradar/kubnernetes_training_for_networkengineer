@@ -1,8 +1,8 @@
-### Update Ubuntu server
 ### Prerequisites
 ```
 EC2 instance
 t2.xlarge
+Ubuntu
 public ip 
 40G of storage
 SSH access
