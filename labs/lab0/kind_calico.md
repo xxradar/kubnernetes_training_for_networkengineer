@@ -2,7 +2,7 @@
 ```
 EC2 instance
 t2.xlarge
-Ubuntu
+Ubuntu 20.04
 public ip 
 40G of storage
 SSH access
