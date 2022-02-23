@@ -5,6 +5,7 @@ EC2 instance
 t2.xlarge
 public ip 
 40G of storage
+SSH access
 ```
 ### Update Ubuntu server 
 ```
