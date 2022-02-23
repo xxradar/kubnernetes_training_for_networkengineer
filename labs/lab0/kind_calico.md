@@ -73,6 +73,28 @@ Adjust the ippools cidr in `custom-resources.yaml` to match the podSubnet `10.10
 vi  custom-resources.yaml 
 ...
 ```
+It should look like this
+```
+# This section includes base Calico installation configuration.
+# For more information, see: https://projectcalico.docs.tigera.io/v3.22/reference/installation/api#operator.tigera.io/v1.Installation
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  # Configures Calico networking.
+  calicoNetwork:
+    # Note: The ipPools section cannot be modified post-install.
+    ipPools:
+    - blockSize: 26
+      cidr: 10.10.0.0/16
+      encapsulation: VXLANCrossSubnet
+      natOutgoing: Enabled
+      nodeSelector: all()
+
+---
+...
+```
 ```
 kubectl apply -f custom-resources.yaml
 ```
