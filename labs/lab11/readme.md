@@ -15,6 +15,19 @@ Note: The SDN connector will verify the certiifcate of the K8S API and fail if n
 kubectl create sa fortigateconnector
 ```
 
+### Create a service account token (for recent versions of K8S)
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fortigatek8sconnectortoken
+  annotations:
+    kubernetes.io/service-account.name: fortigateconnector
+type: kubernetes.io/service-account-token
+EOF
+```
+
 ### Create a K8S role
 ```
 kubectl apply -f - <<EOF
