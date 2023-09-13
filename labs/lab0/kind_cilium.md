@@ -25,7 +25,7 @@ sudo apt-get install -y \
 ```
 curl https://get.docker.com | bash
 sudo usermod -aG docker $USER
-# (logout and login again)
+newgrp docker
 ```
 ### Fix bug in kind
 ```
@@ -51,7 +51,6 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-- role: worker
 - role: worker
 - role: worker
 networking:
