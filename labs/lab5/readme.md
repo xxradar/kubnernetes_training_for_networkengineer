@@ -6,7 +6,6 @@ Create the metallb namespace
 ```
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/main/config/manifests/metallb-native.yaml
 ```
-```
 Create the memberlist secrets
 ```
 kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
