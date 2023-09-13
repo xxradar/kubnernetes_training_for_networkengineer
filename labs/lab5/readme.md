@@ -6,14 +6,6 @@ Create the metallb namespace
 ```
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/main/config/manifests/metallb-native.yaml
 ```
-Create the memberlist secrets
-```
-kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
-```
-Apply metallb manifest
-```
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
-```
 Wait for metallb pods to have a status of Running
 ```
 kubectl get pods -n metallb-system --watch
