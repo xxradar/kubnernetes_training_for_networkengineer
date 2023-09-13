@@ -4,7 +4,7 @@ This lab assumes your K8S can spin up a LoadBalancer. When you're using a manage
 ### Setting up MetalLB
 Create the metallb namespace
 ```
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/main/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
 ```
 Wait for metallb pods to have a status of Running
 ```
@@ -17,18 +17,20 @@ docker network inspect -f '{{.IPAM.Config}}' kind
 Create the MetalLB configmap and match the addresses with the docker IPAM range network.
 ```
 kubectl apply -f - <<EOF
-apiVersion: v1
-kind: ConfigMap
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
 metadata:
+  name: example
   namespace: metallb-system
-  name: config
-data:
-  config: |
-    address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-      - 172.18.255.200-172.18.255.250
+spec:
+  addresses:
+  - 172.19.255.200-172.19.255.250
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: empty
+  namespace: metallb-system
 EOF
 ```
 You can access the LoadBalancer IP from your lab host. <br>
