@@ -4,6 +4,7 @@ export AWS_PAGER=""
 
 aws ec2 run-instances \
   --image-id ami-0a21d1c76ac56fee7 \
+  --region eu-west-3 \
   --instance-type t2.xlarge \
   --key-name <SSH_KEYNAME> \
   --associate-public-ip-address \
