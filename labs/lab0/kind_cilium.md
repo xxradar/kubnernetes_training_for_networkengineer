@@ -72,9 +72,7 @@ kubectl get po -A
 If you experience crashes, it is because of the bug in `kind`. Contact your instructor.
 ### Install HELM
 ```
-curl https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz -o helm-v3.8.0-linux-amd64.tar.gz
-tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
-sudo mv linux-amd64/helm /usr/local/bin/helm
+sudo snap install helm --classic
 ```
 
 ### Install Cilium CNI
@@ -82,27 +80,35 @@ sudo mv linux-amd64/helm /usr/local/bin/helm
 helm repo add cilium https://helm.cilium.io/
 ```
 ```
-docker pull quay.io/cilium/cilium:v1.11.1
-kind load docker-image quay.io/cilium/cilium:v1.11.1
-```
-```
-helm install cilium cilium/cilium --version 1.11.1 \
-   --namespace kube-system \
-   --set kubeProxyReplacement=partial \
-   --set hostServices.enabled=false \
-   --set externalIPs.enabled=true \
-   --set nodePort.enabled=true \
-   --set hostPort.enabled=true \
-   --set bpf.masquerade=false \
-   --set image.pullPolicy=IfNotPresent \
-   --set ipam.mode=kubernetes
+sudo snap install helm --classic
+
+helm repo add cilium https://helm.cilium.io/
+
+helm install cilium cilium/cilium --version 1.14.1 \
+    --namespace kube-system \
+    --set authentication.mutual.spire.enabled=true \
+    --set authentication.mutual.spire.install.enabled=true \
+    --set hubble.relay.enabled=true \
+    --set hubble.ui.enabled=true \
+    --set encryption.enabled=true \
+    --set encryption.type=wireguard \
+    --set kube-proxy-replacement=strict \
+    --set ingressController.enabled=partial \
+    --set ingressController.loadbalancerMode=shared \
+    --set ingressController.service.type="NodePort" \
+    --set loadBalancer.l7.backend=envoy
+
 ```
 ### Install Cilium CLI
 ```
-curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
-sha256sum --check cilium-linux-amd64.tar.gz.sha256sum
-sudo tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
-rm cilium-linux-amd64.tar.gz{,.sha256sum}
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+
 ```
 ```
 cilium status --wait
