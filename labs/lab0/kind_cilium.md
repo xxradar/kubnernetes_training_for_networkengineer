@@ -80,10 +80,6 @@ sudo snap install helm --classic
 helm repo add cilium https://helm.cilium.io/
 ```
 ```
-sudo snap install helm --classic
-
-helm repo add cilium https://helm.cilium.io/
-
 helm install cilium cilium/cilium --version 1.14.1 \
     --namespace kube-system \
     --set authentication.mutual.spire.enabled=true \
