@@ -4,7 +4,7 @@ This lab assumes your K8S can spin up a LoadBalancer. When you're using a manage
 ### Setting up MetalLB
 Create the metallb namespace
 ```
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+kubectl apply -fhttps://raw.githubusercontent.com/metallb/metallb/main/config/manifests/metallb-native.yaml
 ```
 Wait for metallb pods to have a status of Running
 ```
