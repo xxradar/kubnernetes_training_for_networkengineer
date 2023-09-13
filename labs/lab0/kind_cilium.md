@@ -74,7 +74,16 @@ If you experience crashes, it is because of the bug in `kind`. Contact your inst
 ```
 sudo snap install helm --classic
 ```
-
+### Install Cilium CLI
+```
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+```
 ### Install Cilium CNI
 ```
 helm repo add cilium https://helm.cilium.io/
@@ -95,17 +104,6 @@ helm install cilium cilium/cilium --version 1.14.1 \
     --set loadBalancer.l7.backend=envoy
 
 ```
-### Install Cilium CLI
-```
-CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
-CLI_ARCH=amd64
-if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
-curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
-sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
-sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
-rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
-
-```
 ```
 cilium status --wait
 cilium connectivity test #optional
@@ -113,7 +111,7 @@ cilium connectivity test #optional
 
 ### Install Cilium observablity
 ```
-helm upgrade cilium cilium/cilium --version 1.11.1 \
+helm upgrade cilium cilium/cilium --version 1.14.1 \
    --namespace kube-system \
    --reuse-values \
    --set hubble.relay.enabled=true \
