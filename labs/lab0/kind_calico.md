@@ -35,14 +35,15 @@ sudo curl -L "https://storage.googleapis.com/kubernetes-release/release/`curl -s
 sudo chmod +x /usr/local/bin/kubectl
 kubectl version --client
 ```
-### Create a K8S cluster with kind
+### Install Kind tooling
 ```
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 sudo mv ./kind /usr/local/bin/kind
 sudo chmod +x /usr/local/bin/kind
 kind get clusters
 ```
- 
+
+### Create a K8S cluster with kind
 ```
 cat  <<EOF >kind-config.yaml 
 kind: Cluster
@@ -61,7 +62,6 @@ EOF
 kind create cluster --config=kind-config.yaml
 kubectl cluster-info --context kind-kind
 kubectl get no
-   .... 
 ```
 Check if all pods are `running` or `pending`
 ```
