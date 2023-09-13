@@ -27,7 +27,7 @@ Try to reach the NodePort
 export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].address}")
 ```
 _Note: EKS labs should use th external public IP of a node and open the necessary ports on the securitygroups._<br>
-_      For KIND clusters, run docker run -it --network kind xxradar/hackon to issue the commands_
+       For KIND clusters, run docker run -it --network kind xxradar/hackon to issue the commands
 ```
 curl http:///127.0.0.1:31062
 ...
