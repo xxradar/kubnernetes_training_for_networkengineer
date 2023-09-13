@@ -1,11 +1,14 @@
 ### Prerequisites
 ```
-EC2 instance
-t2.xlarge
-ubuntu-focal-20.04-amd64-server
-public ip 
-40G of storage
-SSH access
+export AWS_PAGER=""
+
+aws ec2 run-instances \
+  --image-id ami-0a21d1c76ac56fee7 \
+  --instance-type t2.xlarge \
+  --key-name <SSH_KEYNAME> \
+  --associate-public-ip-address \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyInstance}]' \
+  --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=40,Encrypted=true,VolumeType=gp2,DeleteOnTermination=true}'
 ```
 ### Update Ubuntu server 
 ```
