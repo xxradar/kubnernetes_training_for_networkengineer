@@ -74,7 +74,7 @@ If you experience crashes, it is because of the bug in `kind`. Contact your inst
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
 ```
 ```
-wget https://docs.projectcalico.org/manifests/custom-resources.yaml
+wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml
 ```
 Adjust the ippools cidr in `custom-resources.yaml` to match the podSubnet `10.10.0.0/16`.
 ```
