@@ -27,10 +27,6 @@ curl https://get.docker.com | bash
 sudo usermod -aG docker $USER
 newgrp docker
 ```
-### Fix bug in kind
-```
-sudo sysctl net/netfilter/nf_conntrack_max=262144
-```
 ### Install K8S tooling
 ```
 sudo curl -L "https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
