@@ -1,12 +1,17 @@
 ### Prerequisites
+For eu-west-3
 ```
-EC2 instance
-t2.xlarge
-ubuntu-focal-20.04-amd64-server
-public ip 
-40G of storage
-SSH access
+export AWS_PAGER=""
+
+aws ec2 run-instances \
+  --image-id ami-0a21d1c76ac56fee7 \
+  --instance-type t2.xlarge \
+  --key-name <SSH_KEYNAME> \
+  --associate-public-ip-address \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyInstance}]' \
+  --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=40,Encrypted=true,VolumeType=gp2,DeleteOnTermination=true}'
 ```
+
 ### Update Ubuntu server 
 ```
 sudo apt-get update
@@ -22,11 +27,7 @@ sudo apt-get install -y \
 ```
 curl https://get.docker.com | bash
 sudo usermod -aG docker $USER
-# (logout and login again)
-```
-### Fix bug in kind
-```
-sudo sysctl net/netfilter/nf_conntrack_max=262144
+newgrp docker
 ```
 ### Install K8S tooling
 ```
@@ -50,10 +51,9 @@ nodes:
 - role: control-plane
 - role: worker
 - role: worker
-- role: worker
 networking:
   disableDefaultCNI: true
-  podSubnet: "10.10.0.0/16"
+  podSubnet: 192.168.0.0/16
   serviceSubnet: "10.11.0.0/16"
 EOF
 ```
@@ -71,41 +71,9 @@ If you experience crashes, it is because of the bug in `kind`. Contact your inst
 
 ### Install Calico CNI
 ```
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+kubectl apply -f  https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
 ```
-```
-wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml
-```
-Adjust the ippools cidr in `custom-resources.yaml` to match the podSubnet `10.10.0.0/16`.
-```
-vi  custom-resources.yaml 
-...
-```
-It should look like this. This is where you can configure Calico CNI installation parameters.
-```
-# This section includes base Calico installation configuration.
-# For more information, see: https://projectcalico.docs.tigera.io/v3.22/reference/installation/api#operator.tigera.io/v1.Installation
-apiVersion: operator.tigera.io/v1
-kind: Installation
-metadata:
-  name: default
-spec:
-  # Configures Calico networking.
-  calicoNetwork:
-    # Note: The ipPools section cannot be modified post-install.
-    ipPools:
-    - blockSize: 26
-      cidr: 10.10.0.0/16
-      encapsulation: VXLANCrossSubnet
-      natOutgoing: Enabled
-      nodeSelector: all()
 
----
-...
-```
-```
-kubectl apply -f custom-resources.yaml
-```
 ### Verify cluster 
 ```
 watch kubectl get po -n calico-system
