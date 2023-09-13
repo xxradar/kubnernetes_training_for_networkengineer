@@ -91,7 +91,6 @@ EOF
 kubectl get ingress -n prod-nginx
 ```
 Update your hostfile !!!
-
 ```
 Add to /etc/hosts
 <NODE_ADDRESS> tlsapp1.dockersec.me
@@ -100,4 +99,8 @@ Check carefully the TLS handshake.
 ```
 curl -kv  -H "Host: tlsapp1.dockersec.me" https://tlsapp1.dockersec.me:$SECUREWEB
 curl -kv  -H "Host: tlsapp1.dockersec.me" https://$NODE:$SECUREWEB
+```
+This might also work without modifing the /etc/host
+```
+curl -kv  --resolve tlsapp1.dockersec.me:$SECUREWEB:$NODE  -H "Host: tlsapp1.dockersec.me" https://tlsapp1.dockersec.me:$SECUREWEB
 ```
