@@ -12,8 +12,8 @@ This lab provisions an Ubuntu EC2 instance, installs the tooling, and creates a 
 | Cloud / region | AWS EC2, `eu-west-3` |
 | Instance | `t2.xlarge`, Ubuntu 22.04 LTS (cgroup v2) |
 | Cluster | 1 control-plane + 2 workers (kind) |
+| Pod CIDR | `10.10.0.0/16` |
 | Service CIDR | `10.11.0.0/16` |
-| Pod CIDR | Cilium `10.10.0.0/16` · Calico `192.168.0.0/16` |
 | Audit logging | kube-apiserver audit → `/var/log/kubernetes/audit/audit.log` |
 
 ---
@@ -55,12 +55,6 @@ aws ec2 describe-instances \
     "Name=instance-state-name,Values=running,pending" \
   --query 'Reservations[].Instances[].PublicIpAddress' \
   --output text
-```
-
-Confirm the host uses cgroup v2 (required by current Kubernetes):
-
-```bash
-stat -fc %T /sys/fs/cgroup   # expect: cgroup2fs
 ```
 
 ---
@@ -112,13 +106,6 @@ kind --version
 
 ## 6. Create the cluster
 
-Set the pod CIDR for the CNI you plan to install:
-
-```bash
-export POD_CIDR=10.10.0.0/16       # Cilium
-# export POD_CIDR=192.168.0.0/16   # Calico
-```
-
 Write the API-server audit policy (logs metadata for every request):
 
 ```bash
@@ -164,7 +151,7 @@ nodes:
 - role: worker
 networking:
   disableDefaultCNI: true
-  podSubnet: "$POD_CIDR"
+  podSubnet: "10.10.0.0/16"
   serviceSubnet: "10.11.0.0/16"
 EOF
 ```
@@ -197,5 +184,5 @@ You should see `audit.k8s.io/v1` JSON events.
 
 Continue with one of:
 
-- [Cilium](kind_cilium.md) — pod CIDR `10.10.0.0/16`
-- [Calico](kind_calico.md) — pod CIDR `192.168.0.0/16`
+- [Cilium](kind_cilium.md)
+- [Calico](kind_calico.md)

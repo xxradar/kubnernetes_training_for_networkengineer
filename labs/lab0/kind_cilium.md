@@ -1,8 +1,6 @@
 # Lab 0 — Cilium CNI
 
-Installs [Cilium](https://cilium.io/) as the CNI on the kind cluster from [kind_setup.md](kind_setup.md). Create that cluster with pod CIDR `10.10.0.0/16` before continuing.
-
-Cilium is installed with WireGuard pod encryption, kube-proxy replacement, and Hubble observability.
+Installs [Cilium](https://cilium.io/) as the CNI on the kind cluster from [kind_setup.md](kind_setup.md), with WireGuard pod encryption, kube-proxy replacement, and Hubble observability.
 
 ---
 

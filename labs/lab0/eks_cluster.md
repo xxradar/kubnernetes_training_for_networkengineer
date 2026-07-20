@@ -32,7 +32,7 @@ aws sts get-caller-identity
 
 ## 2. Install eksctl
 
-> The eksctl project moved from `weaveworks` to `eksctl-io`. Use the current URL below. This downloads the `amd64` Linux build; on ARM instances replace `amd64` with `arm64`.
+> Downloads the `amd64` Linux build; on ARM instances replace `amd64` with `arm64`.
 
 ```bash
 curl --silent --location "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
@@ -97,7 +97,7 @@ kubectl get no -o wide
 
 ## 5. Install Calico for network policy
 
-The AWS VPC CNI manifests that older guides referenced have been retired. The current method uses the **Tigera operator** in policy-only mode, following the [official Calico EKS install docs](https://docs.tigera.io/calico/latest/getting-started/kubernetes/managed-public-cloud/eks).
+Install Calico with the **Tigera operator** in policy-only mode, following the [official Calico EKS install docs](https://docs.tigera.io/calico/latest/getting-started/kubernetes/managed-public-cloud/eks).
 
 First, let the AWS VPC CNI annotate pods with their IPs so they propagate quickly to Calico (this grants the `aws-node` daemon set the `patch` permission on pods):
 

@@ -86,8 +86,7 @@ module "eks" {
   cluster_version                = "1.36"
   cluster_endpoint_public_access = true
 
-  # Grant the IAM identity running Terraform admin access to the cluster,
-  # so kubectl works after apply (module default is false).
+  # Grant the IAM identity running Terraform admin access to the cluster.
   enable_cluster_creator_admin_permissions = true
 
   vpc_id     = module.vpc.vpc_id
