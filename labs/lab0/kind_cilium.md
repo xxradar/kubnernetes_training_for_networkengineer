@@ -17,6 +17,14 @@ aws ec2 run-instances \
   --key-name training \
   --associate-public-ip-address \
   --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=k8straining}]'
+
+aws ec2 describe-instances \
+  --region eu-west-3 \
+  --filters \
+    "Name=tag:Name,Values=MyInstance" \
+    "Name=instance-state-name,Values=running,pending" \
+  --query 'Reservations[].Instances[].PublicIpAddress' \
+  --output text
 ```
 ### Update Ubuntu server 
 ```
