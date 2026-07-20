@@ -1,4 +1,9 @@
 # LAB02 - Deployments and ReplicaSets
+
+A **Deployment** declares the desired state of your app and manages a **ReplicaSet**, which keeps a fixed number of identical **pod** replicas running. If a pod dies or a node fails, the ReplicaSet recreates it. This is the self-healing reconciliation loop (desired state versus actual state), which a network engineer can picture as an auto-recovering pool of identical backends.
+
+Two things matter for networking. Every replacement pod gets a **new IP**, and pods are tied to their ReplicaSet by **labels** (the `selector`). That constant churn is exactly why you never target a pod IP directly, and why Services (LAB03) exist.
+
 Create a deployment
 ```
 kubectl apply -f - <<EOF
@@ -27,82 +32,27 @@ spec:
         - containerPort: 80
 EOF
 ```
+Inspect the deployment, its pods, and the ReplicaSet it created
 ```
 kubectl get deploy -n prod-nginx -o wide
-```
-```
 kubectl get po -n prod-nginx -o wide
-```
-```
 kubectl describe deploy -n prod-nginx nginx-deployment
+kubectl get rs -n prod-nginx
+kubectl describe rs -n prod-nginx <your_rs>
 ```
-```
-Name:                   nginx-deployment
-Namespace:              default
-CreationTimestamp:      Tue, 09 Nov 2021 09:44:01 +0100
-Labels:                 app=nginx-deployment
-Annotations:            deployment.kubernetes.io/revision: 1
-Selector:               app=nginx
-Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
-StrategyType:           RollingUpdate
-MinReadySeconds:        0
-RollingUpdateStrategy:  25% max unavailable, 25% max surge
-Pod Template:
-  Labels:  app=nginx
-  Containers:
-   nginx:
-    Image:        nginx
-    Port:         80/TCP
-    Host Port:    0/TCP
-    Environment:  <none>
-    Mounts:       <none>
-  Volumes:        <none>
-Conditions:
-  Type           Status  Reason
-  ----           ------  ------
-  Progressing    True    NewReplicaSetAvailable
-  Available      True    MinimumReplicasAvailable
-OldReplicaSets:  <none>
-NewReplicaSet:   nginx-deployment-7848d4b86f (3/3 replicas created)
-Events:
-  Type    Reason             Age   From                   Message
-  ----    ------             ----  ----                   -------
-  Normal  ScalingReplicaSet  27m   deployment-controller  Scaled up replica set nginx-deployment-7848d4b86f to 3
-```
-```
-kubectl get rs -n prod-nginx 
-```
-```
-kubectl describe  rs -n prod-nginx <your_rs>
-```
- 
- 
+Look at the pod names: `nginx-deployment-<replicaset-hash>-<random>`. The `pod-template-hash` label is what ties each pod to its ReplicaSet, and the `describe deploy` output points at the `NewReplicaSet` that owns them.
+
 ### Exercise
-Check the POD labels
-```
-kubectl get po -n prod-nginx -o wide --show-labels
-```
-Try to add a pod, what happens ? (verify and change the `pod-template-hash`)
-```
-kubectl run  -n prod-nginx --image nginx testnginx -l app=nginx,env=prod,pod-template-hash=7848d4b86f 
- ```
- Check the replication set again ...
- ```
- kubectl describe rs -n prod-nginx <your_rs>
- ...
- ```
- Try to delete a pod from the deployment. What happens?
- ```
- kubectl delete po -n prod-nginx nginx-deployment-755b69f8f9-h9dvg
- ```
- Try to scale the deployment, what happens?
- ```
- kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment
- ```
- ```
- kubectl describe rs -n prod-nginx <your_rs>
- ```
- 
-### Exercise
- - delete some pods from the deployment
- - check if the pods come back? What about IP addresses ?
+Work through these and reason about the "why".
+
+* Show the pod labels: `kubectl get po -n prod-nginx -o wide --show-labels`
+* Manually add a pod that matches the ReplicaSet selector, reusing the current `pod-template-hash`:
+  `kubectl run -n prod-nginx --image nginx testnginx -l app=nginx,env=prod,pod-template-hash=<your_hash>`
+  Re-check the ReplicaSet. What happened to your extra pod, and why?
+* Delete one pod from the deployment. Does it come back? Same name? Same IP?
+  `kubectl delete po -n prod-nginx <a_pod_name>`
+* Scale the deployment and watch where the new pods land (which nodes):
+  `kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment`
+  `kubectl get po -n prod-nginx -o wide`
+
+> Takeaway for network engineers: the ReplicaSet continuously reconciles to the desired replica count, so pods and their IPs come and go. You manage the set through labels, not through individual pods. That moving target is what a Service sits in front of, next in LAB03.
