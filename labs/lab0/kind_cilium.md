@@ -149,7 +149,9 @@ Unavailable Nodes: 4
   - kind-control-plane
   - kind-worker
   - kind-worker2
-  - kind-worker3hubble observe
+  - kind-worker3
+
+$ hubble observe
 ```
 ```
 $ hubble observe
