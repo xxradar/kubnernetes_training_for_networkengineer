@@ -1,4 +1,4 @@
-## LAB 3
+# LAB03 - Services - ClusterIP
 Create a service of type ClusterIP 
 ```
 kubectl apply -f - <<EOF

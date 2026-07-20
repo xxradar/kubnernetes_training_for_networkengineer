@@ -1,4 +1,4 @@
-## LAB 7 - Kubernetes native network security policies
+# LAB07 - Kubernetes native network security policies
 Check connectivity ...
 
 ```

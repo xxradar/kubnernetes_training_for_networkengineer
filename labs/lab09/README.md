@@ -1,4 +1,4 @@
-## Accessing kubernetes services
+# LAB09 - Accessing kubernetes services
 In a lab environment, you won't always have access via a load-balancer ...<br>
 Also please keep in mind the network policies that are in place, they still apply.
 

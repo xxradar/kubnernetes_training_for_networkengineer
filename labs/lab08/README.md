@@ -1,4 +1,4 @@
-## Lab 8 - Calico global network policy example
+# LAB08 - Global network security policies
 _Note: this will not work on EKS. For EKS you must install the correct version of calicoctl ([install](calicoctl.md)). To apply the policies use calicoctl instead of kubectl_
 ```
 kubectl apply -f - <<EOF

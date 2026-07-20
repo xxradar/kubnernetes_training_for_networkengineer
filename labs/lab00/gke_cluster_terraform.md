@@ -1,4 +1,4 @@
-# Lab 0 — GKE Cluster with Terraform (default GKE networking)
+# LAB00 — GKE Cluster with Terraform (default GKE networking)
 
 This lab creates a regional [GKE](https://cloud.google.com/kubernetes-engine) cluster with [Terraform](https://developer.hashicorp.com/terraform), using GKE's default VPC-native networking. It provisions the same size cluster as the EKS and AKS labs.
 

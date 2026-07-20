@@ -1,4 +1,4 @@
-## LAB 4
+# LAB04 - Services - NodePort
 Create a service of type NodePort 
 ```
 kubectl apply -f - <<EOF

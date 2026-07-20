@@ -1,4 +1,4 @@
-## Lab2
+# LAB02 - Deployments and ReplicaSets
 Create a deployment
 ```
 kubectl apply -f - <<EOF

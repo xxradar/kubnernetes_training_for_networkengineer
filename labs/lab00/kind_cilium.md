@@ -1,4 +1,4 @@
-# Lab 0 — Cilium CNI
+# LAB00 — Cilium CNI
 
 Installs [Cilium](https://cilium.io/) as the CNI on the kind cluster from [kind_setup.md](kind_setup.md), with WireGuard pod encryption, kube-proxy replacement, and Hubble observability.
 

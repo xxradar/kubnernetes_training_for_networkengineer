@@ -1,4 +1,4 @@
-# Lab 0 — EKS Cluster with Terraform (default AWS CNI)
+# LAB00 — EKS Cluster with Terraform (default AWS CNI)
 
 This lab creates a managed [Amazon EKS](https://aws.amazon.com/eks/) cluster with [Terraform](https://developer.hashicorp.com/terraform) using the community `terraform-aws-modules` for VPC and EKS. It provisions the same size cluster as the eksctl lab, using the **default AWS VPC CNI** for pod networking (no Calico).
 

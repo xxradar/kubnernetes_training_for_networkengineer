@@ -1,4 +1,4 @@
-### Lab 1
+# LAB01 - Learning about pods
 Create a namespace
 ```
 kubectl create ns prod-nginx

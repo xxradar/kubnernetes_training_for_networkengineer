@@ -1,4 +1,4 @@
-# Install a kubernetes cluster
+# LAB00 - Install a kubernetes cluster
 * [Rancher Desktop](https://rancherdesktop.io/)
 * Kind cluster — [common setup](kind_setup.md), then [Cilium](kind_cilium.md) or [Calico](kind_calico.md)
 * [EKS cluster - Calico (eksctl)](eks_cluster.md)
