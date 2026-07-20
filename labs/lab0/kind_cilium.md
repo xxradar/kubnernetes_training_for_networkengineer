@@ -3,7 +3,7 @@
 export AWS_PAGER=""
 
 aws ec2 run-instances \
-  --image-id ami-0a21d1c76ac56fee7 \
+  --image-id ami-0a2387cb2c63a860e \
   --region eu-west-3 \
   --instance-type t2.xlarge \
   --key-name <SSH_KEYNAME> \
