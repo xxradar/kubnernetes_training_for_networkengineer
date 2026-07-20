@@ -11,10 +11,11 @@ This lab creates a managed [Amazon EKS](https://aws.amazon.com/eks/) cluster wit
 | Component | Value |
 |-----------|-------|
 | Cloud / region | AWS EKS, `eu-central-1` |
-| Cluster | `training-cluster` (eksctl config file) |
+| Cluster | `training-cluster` (eksctl config file), Kubernetes 1.36 |
 | Node group | 3× `t2.xlarge` (min 3, max 5) |
 | Networking (CNI) | AWS VPC CNI (pod IPs from the VPC) |
 | Network policy | Calico (Tigera operator, `v3.32.1`, policy-only) |
+| Control-plane logging | `audit`, `api`, `authenticator` → CloudWatch |
 
 ---
 
@@ -63,14 +64,20 @@ kind: ClusterConfig
 metadata:
   name: training-cluster
   region: eu-central-1
+  version: "1.36"
 nodeGroups:
   - name: worker-group
     instanceType: t2.xlarge
     desiredCapacity: 3
     minSize: 3
     maxSize: 5
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["api", "audit", "authenticator"]
 EOF
 ```
+
+> **Audit logging:** The `cloudWatch.clusterLogging` block enables EKS control-plane logging — `audit` (every request to the API server), plus `api` and `authenticator`. Logs go to the CloudWatch log group `/aws/eks/training-cluster/cluster`. Use `["all"]` to enable every type. Control-plane logs are **off by default** on EKS and incur CloudWatch ingestion/storage charges.
 
 > **Tip:** Validate the config without creating anything using `eksctl create cluster -f cluster.yaml --dry-run` — it renders the fully-expanded config (AMI family, AZs, Kubernetes version) so you can catch schema errors first.
 
