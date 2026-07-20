@@ -42,6 +42,22 @@ kubectl describe rs -n prod-nginx <your_rs>
 ```
 Look at the pod names: `nginx-deployment-<replicaset-hash>-<random>`. The `pod-template-hash` label is what ties each pod to its ReplicaSet, and the `describe deploy` output points at the `NewReplicaSet` that owns them.
 
+## Labels and selectors
+**Labels** are key/value tags you attach to objects (here `app: nginx` and `env: prod`). On their own they do nothing. A **selector** is a query that matches objects by their labels, and this is the glue that loosely couples things in Kubernetes without anyone hard-coding a pod IP or name.
+
+* The Deployment's ReplicaSet owns exactly the pods that match its `spec.selector.matchLabels` (here `app: nginx`).
+* A Service (LAB03) picks its backend pods the same way, with a label selector.
+* The `pod-template-hash` label is added automatically by the Deployment, so pods from different rollout revisions can be told apart.
+
+Look at, and filter by, labels from the CLI:
+```
+kubectl get po -n prod-nginx --show-labels               # show every label on each pod
+kubectl get po -n prod-nginx -l app=nginx                # only pods matching this label
+kubectl get po -n prod-nginx -l env=prod,app=nginx       # AND of both labels
+kubectl get po -n prod-nginx -L app -L env               # show these label values as columns
+```
+This is exactly the matching the ReplicaSet does to decide which pods it owns, and what a Service does to decide where to send traffic.
+
 ### Exercise
 Work through these and reason about the "why".
 
