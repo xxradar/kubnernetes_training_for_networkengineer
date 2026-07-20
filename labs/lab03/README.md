@@ -4,6 +4,37 @@ A **Service** of type **ClusterIP** gives you a stable virtual IP (a VIP) and a 
 
 For network engineers: the ClusterIP is not bound to any interface, it is a virtual address that the dataplane (kube-proxy, or Cilium eBPF in our setup) DNATs to a real pod IP. The **Endpoints** object is the live list of pod IPs behind the service, updated automatically as pods come and go. The DNS name is `<service>.<namespace>` (fully qualified: `<service>.<namespace>.svc.cluster.local`).
 
+## Setup
+A Service selects pods by label, so it needs some pods to point at. If you are starting fresh, create the `prod-nginx` namespace and the LAB02 nginx deployment first (skip whatever already exists):
+```
+kubectl create ns prod-nginx
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: prod-nginx
+  labels:
+    app: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+        env: prod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+EOF
+```
+
 Create a service of type ClusterIP
 ```
 kubectl apply -f - <<EOF
