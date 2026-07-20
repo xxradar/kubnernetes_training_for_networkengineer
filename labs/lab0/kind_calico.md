@@ -1,6 +1,27 @@
-### Prerequisites
-For eu-west-3
-```
+# Lab 0 — Kind Cluster with Calico CNI
+
+This lab builds a 3-node Kubernetes cluster in [kind](https://kind.sigs.k8s.io/) (Kubernetes-in-Docker) on an AWS EC2 instance, then installs [Calico](https://docs.tigera.io/calico/latest/about/) as the CNI.
+
+> **Note:** The default CNI is disabled in the kind config (`disableDefaultCNI: true`) so that Calico can take over pod networking. The pod CIDR (`192.168.0.0/16`) matches Calico's default IP pool.
+
+**What you build**
+
+| Component | Value |
+|-----------|-------|
+| Cloud / region | AWS EC2, `eu-west-3` |
+| Instance | `t2.xlarge` (4 vCPU / 16 GB), 40 GB encrypted root disk |
+| Cluster | 1 control-plane + 2 workers (kind) |
+| Pod CIDR | `192.168.0.0/16` |
+| Service CIDR | `10.11.0.0/16` |
+| CNI | Calico v3.26.1 |
+
+---
+
+## 1. Prerequisites — Launch an EC2 instance
+
+Replace `<SSH_KEYNAME>` with an existing key pair in `eu-west-3` (or create one first with `aws ec2 create-key-pair`).
+
+```bash
 export AWS_PAGER=""
 
 aws ec2 run-instances \
@@ -13,8 +34,23 @@ aws ec2 run-instances \
   --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=40,Encrypted=true,VolumeType=gp2,DeleteOnTermination=true}'
 ```
 
-### Update Ubuntu server 
+Grab the public IP once the instance is running, then SSH in with `ssh -i <SSH_KEYNAME>.pem ubuntu@<PUBLIC_IP>`.
+
+```bash
+aws ec2 describe-instances \
+  --region eu-west-3 \
+  --filters \
+    "Name=tag:Name,Values=MyInstance" \
+    "Name=instance-state-name,Values=running,pending" \
+  --query 'Reservations[].Instances[].PublicIpAddress' \
+  --output text
 ```
+
+---
+
+## 2. Update the Ubuntu server
+
+```bash
 sudo apt-get update
 sudo apt-get install -y \
     apt-transport-https \
@@ -24,29 +60,48 @@ sudo apt-get install -y \
     software-properties-common \
     net-tools
 ```
-### Install docker
-```
+
+---
+
+## 3. Install Docker
+
+```bash
 curl https://get.docker.com | bash
 sudo usermod -aG docker $USER
 newgrp docker
 ```
-### Install K8S tooling
-```
+
+> `newgrp docker` activates the new group in the current shell so you can run `docker` without `sudo`.
+
+---
+
+## 4. Install Kubernetes tooling (kubectl)
+
+```bash
 sudo curl -L "https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 kubectl version --client
 ```
-### Install Kind tooling
-```
+
+---
+
+## 5. Install kind
+
+```bash
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 sudo mv ./kind /usr/local/bin/kind
 sudo chmod +x /usr/local/bin/kind
 kind get clusters
 ```
 
-### Create a K8S cluster with kind
-```
-cat  <<EOF >kind-config.yaml 
+---
+
+## 6. Create the cluster
+
+Write the cluster config. Note `disableDefaultCNI: true` — pods stay in `Pending` until Calico is installed, which is expected.
+
+```bash
+cat <<EOF >kind-config.yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -59,28 +114,45 @@ networking:
   serviceSubnet: "10.11.0.0/16"
 EOF
 ```
-```
+
+```bash
 kind create cluster --config=kind-config.yaml
 kubectl cluster-info --context kind-kind
 kubectl get no
 ```
-Check if all pods are `running` or `pending`
-```
+
+Check that all pods are `Running` or `Pending`:
+
+```bash
 kubectl get po -A
 ```
-If you experience crashes, it is because of the bug in `kind`. Contact your instructor.
 
-### Install Calico CNI
-```
-kubectl apply -f  https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
+> If you experience crashes, it is because of a bug in `kind`. Contact your instructor.
+
+---
+
+## 7. Install the Calico CNI
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
 ```
 
-### Verify cluster 
-```
+> This manifest deploys the Calico operator and its resources into the `calico-system` namespace. It may take a minute or two to pull images and become ready.
+
+---
+
+## 8. Verify the cluster
+
+Watch the Calico pods roll out (press `Ctrl+C` to exit the watch):
+
+```bash
 watch kubectl get po -n calico-system
 ```
-When all pods are running ... the nodes should be ready.
-```
+
+When all pods are `Running`, the nodes should transition to `Ready`:
+
+```bash
 kubectl get no -o wide
 ```
-  
+
+> **Next step:** Calico's `calicoctl` CLI (used in later labs) lets you inspect IP pools, BGP peers, and network policy. See `labs/lab8/calicoctl.md`.
