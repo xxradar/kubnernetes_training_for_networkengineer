@@ -162,7 +162,7 @@ kubectl cluster-info --context kind-kind
 kubectl get no
 ```
 
-The nodes stay `NotReady` and CoreDNS stays `Pending` until you install a CNI - this is expected.
+The nodes stay `NotReady` and CoreDNS stays `Pending` until you install a CNI. This is expected.
 
 ```bash
 kubectl get po -A

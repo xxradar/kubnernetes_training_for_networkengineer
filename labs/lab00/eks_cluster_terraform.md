@@ -2,7 +2,7 @@
 
 This lab creates a managed [Amazon EKS](https://aws.amazon.com/eks/) cluster with [Terraform](https://developer.hashicorp.com/terraform) using the community `terraform-aws-modules` for VPC and EKS. It provisions the same size cluster as the eksctl lab, using the **default AWS VPC CNI** for pod networking (no Calico).
 
-> **Note:** This is the infrastructure-as-code alternative to `eks_cluster.md`. Terraform manages the full lifecycle - VPC, subnets, IAM, the EKS control plane, a managed node group, and the core add-ons (`vpc-cni`, `kube-proxy`, `coredns`) - and can tear it all down again with a single `destroy`.
+> **Note:** This is the infrastructure-as-code alternative to `eks_cluster.md`. Terraform manages the full lifecycle: VPC, subnets, IAM, the EKS control plane, a managed node group, and the core add-ons (`vpc-cni`, `kube-proxy`, `coredns`), and can tear it all down again with a single `destroy`.
 
 > **Cost / time:** An EKS control plane plus 3× `t2.xlarge` nodes and a NAT gateway run real AWS charges, and `terraform apply` takes ~15 minutes. Always `terraform destroy` when finished.
 
@@ -123,7 +123,7 @@ EOF
 
 ## 3. Initialize and review
 
-Download the providers and modules, then check the plan (read-only - creates nothing):
+Download the providers and modules, then check the plan (read-only, creates nothing):
 
 ```bash
 terraform init
@@ -131,7 +131,7 @@ terraform validate
 terraform plan
 ```
 
-> The plan should report roughly 59 resources to add - the VPC and subnets, IAM roles, the EKS control plane, the `worker-group` managed node group, and the `vpc-cni` / `kube-proxy` / `coredns` add-ons.
+> The plan should report roughly 59 resources to add: the VPC and subnets, IAM roles, the EKS control plane, the `worker-group` managed node group, and the `vpc-cni` / `kube-proxy` / `coredns` add-ons.
 
 ---
 

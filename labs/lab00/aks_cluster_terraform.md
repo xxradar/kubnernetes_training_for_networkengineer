@@ -2,7 +2,7 @@
 
 This lab creates a managed [AKS](https://azure.microsoft.com/products/kubernetes-service) cluster with [Terraform](https://developer.hashicorp.com/terraform), using the default Azure CNI networking. It provisions the same size cluster as the EKS and GKE labs.
 
-> **Note:** Terraform manages the full lifecycle - a resource group, the AKS control plane, and a 3-node system node pool. AKS also auto-creates a second, node-infrastructure resource group named `MC_<rg>_<cluster>_<location>` that holds the VMSS, disks, and networking.
+> **Note:** Terraform manages the full lifecycle: a resource group, the AKS control plane, and a 3-node system node pool. AKS also auto-creates a second, node-infrastructure resource group named `MC_<rg>_<cluster>_<location>` that holds the VMSS, disks, and networking.
 
 > **Cost / time:** An AKS cluster with 3× `Standard_D4s_v5` nodes runs real Azure charges, and `terraform apply` takes ~5 minutes. Always `terraform destroy` when finished.
 
