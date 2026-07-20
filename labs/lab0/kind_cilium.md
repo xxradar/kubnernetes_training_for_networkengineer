@@ -2,6 +2,14 @@
 ```
 export AWS_PAGER=""
 
+aws ec2 create-key-pair \
+  --key-name training \
+  --region eu-west-3 \
+  --query 'KeyMaterial' \
+  --output text > training.pem
+
+chmod 400 training 
+
 aws ec2 run-instances \
   --image-id ami-0a2387cb2c63a860e \
   --region eu-west-3 \
