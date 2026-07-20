@@ -109,7 +109,7 @@ rm hubble-linux-amd64.tar.gz{,.sha256sum}
 helm repo add cilium https://helm.cilium.io/
 ```
 ```
-helm install cilium cilium/cilium --version 1.14.1 \
+helm install cilium cilium/cilium --version 1.19.6 \
     --namespace kube-system \
     --set authentication.mutual.spire.enabled=true \
     --set authentication.mutual.spire.install.enabled=true \
