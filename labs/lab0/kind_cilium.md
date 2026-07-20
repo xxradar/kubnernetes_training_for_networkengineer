@@ -111,8 +111,6 @@ helm repo add cilium https://helm.cilium.io/
 ```
 helm install cilium cilium/cilium --version 1.19.6 \
     --namespace kube-system \
-    --set authentication.mutual.spire.enabled=true \
-    --set authentication.mutual.spire.install.enabled=true \
     --set hubble.relay.enabled=true \
     --set hubble.ui.enabled=true \
     --set encryption.enabled=true \
