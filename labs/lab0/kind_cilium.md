@@ -116,7 +116,7 @@ helm install cilium cilium/cilium --version 1.19.6 \
     --set encryption.enabled=true \
     --set encryption.type=wireguard \
     --set kube-proxy-replacement=strict \
-    --set ingressController.enabled=partial \
+    --set ingressController.enabled=true \
     --set ingressController.loadbalancerMode=shared \
     --set ingressController.service.type="NodePort" \
     --set loadBalancer.l7.backend=envoy
