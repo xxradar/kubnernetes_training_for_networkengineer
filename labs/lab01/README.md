@@ -52,7 +52,7 @@ Work through these yourself, the interesting part is figuring out the "why".
 
 * Create a new namespace `lab01-exercise` (namespace names can't contain underscores, so no `lab01_exercise`)
 * Create an `nginx` pod in the new namespace
-* Find the IP address of the new pod (`kubectl get po -n lab01-exercise -o wide`)
+* Find the IP address of the new pod
 * Start an interactive throwaway pod in the same namespace:
   `kubectl run tmp -it -n lab01-exercise --rm --image ubuntu -- bash`
 * From inside it, try to `curl` the nginx pod's IP
