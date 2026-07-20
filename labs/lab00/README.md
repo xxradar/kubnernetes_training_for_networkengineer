@@ -12,8 +12,8 @@ Pick one path and stick with it:
 If you are using the kind path, first SSH into your Ubuntu host (see [common setup](kind_setup.md) for launching it), then install git and clone this repo so you have all the manifests locally:
 ```
 sudo apt-get update && sudo apt-get install -y git
-git clone https://github.com/xxradar/kubnernetes_training_for_networkengineer.git
-cd kubnernetes_training_for_networkengineer
+git clone https://github.com/xxradar/kubernetes_training_for_networkengineer.git
+cd kubernetes_training_for_networkengineer
 ```
 From here on, each lab lives under `labs/labXX/`.
 
