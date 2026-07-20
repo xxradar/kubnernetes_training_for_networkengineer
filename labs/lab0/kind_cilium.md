@@ -8,16 +8,15 @@ aws ec2 create-key-pair \
   --query 'KeyMaterial' \
   --output text > training.pem
 
-chmod 400 training 
+chmod 400 training.pem 
 
 aws ec2 run-instances \
   --image-id ami-0a2387cb2c63a860e \
   --region eu-west-3 \
   --instance-type t2.xlarge \
-  --key-name <SSH_KEYNAME> \
+  --key-name training \
   --associate-public-ip-address \
-  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyInstance}]' \
-  --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=40,Encrypted=true,VolumeType=gp2,DeleteOnTermination=true}'
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=k8straining}]'
 ```
 ### Update Ubuntu server 
 ```
