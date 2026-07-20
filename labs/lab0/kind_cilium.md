@@ -208,6 +208,8 @@ helm install cilium cilium/cilium --version 1.19.6 \
 | `loadBalancer.l7.backend=envoy` | Envoy-based L7 load balancing |
 
 > **Why these IPAM flags?** In its default `cluster-pool` mode, Cilium allocates pod IPs from its own pool and ignores the kind `podSubnet`. These flags point that pool at `10.10.0.0/16` so the CIDR in your kind config is actually used.
+>
+> **What about the service CIDR?** No Cilium flag is needed for `serviceSubnet` (`10.11.0.0/16`). Unlike pod IPs, ClusterIPs are allocated by the kube-apiserver (`--service-cluster-ip-range`, set from the kind config) — even before a CNI is installed. Cilium just watches Services and programs eBPF for the IPs the apiserver already assigned. You can confirm with `kubectl get svc -A` (e.g. `kubernetes` = `10.11.0.1`, `kube-dns` = `10.11.0.10`).
 
 Wait for Cilium to come up, then (optionally) run the connectivity test:
 
