@@ -1,8 +1,8 @@
-# LAB00 — EKS Cluster with Calico Network Policy
+# LAB00 - EKS Cluster with Calico Network Policy
 
 This lab creates a managed [Amazon EKS](https://aws.amazon.com/eks/) cluster with [eksctl](https://eksctl.io/) using a cluster config file, then adds [Calico](https://docs.tigera.io/calico/latest/about/) **for network policy** on top of the AWS VPC CNI.
 
-> **Note:** This is the **policy-only** setup — the AWS VPC CNI keeps handling pod networking (IPAM from your VPC), and Calico is layered on purely to enforce Kubernetes and Calico network policy. You do **not** replace the cluster's data plane. Do not also enable the VPC CNI's built-in network policy — it conflicts with Calico.
+> **Note:** This is the **policy-only** setup - the AWS VPC CNI keeps handling pod networking (IPAM from your VPC), and Calico is layered on purely to enforce Kubernetes and Calico network policy. You do **not** replace the cluster's data plane. Do not also enable the VPC CNI's built-in network policy - it conflicts with Calico.
 
 > **Cost / time:** An EKS control plane plus 3× `t2.xlarge` nodes runs real AWS charges, and `eksctl create cluster` takes ~15 minutes. Remember to delete the cluster (final step) when you are done.
 
@@ -19,7 +19,7 @@ This lab creates a managed [Amazon EKS](https://aws.amazon.com/eks/) cluster wit
 
 ---
 
-## 1. Prerequisites — AWS credentials
+## 1. Prerequisites - AWS credentials
 
 Configure the AWS CLI and confirm you are authenticated in the right account.
 
@@ -77,9 +77,9 @@ cloudWatch:
 EOF
 ```
 
-> **Audit logging:** The `cloudWatch.clusterLogging` block enables EKS control-plane logging — `audit` (every request to the API server), plus `api` and `authenticator`. Logs go to the CloudWatch log group `/aws/eks/training-cluster/cluster`. Use `["all"]` to enable every type. Control-plane logs are **off by default** on EKS and incur CloudWatch ingestion/storage charges.
+> **Audit logging:** The `cloudWatch.clusterLogging` block enables EKS control-plane logging - `audit` (every request to the API server), plus `api` and `authenticator`. Logs go to the CloudWatch log group `/aws/eks/training-cluster/cluster`. Use `["all"]` to enable every type. Control-plane logs are **off by default** on EKS and incur CloudWatch ingestion/storage charges.
 
-> **Tip:** Validate the config without creating anything using `eksctl create cluster -f cluster.yaml --dry-run` — it renders the fully-expanded config (AMI family, AZs, Kubernetes version) so you can catch schema errors first.
+> **Tip:** Validate the config without creating anything using `eksctl create cluster -f cluster.yaml --dry-run` - it renders the fully-expanded config (AMI family, AZs, Kubernetes version) so you can catch schema errors first.
 
 Create the cluster (this takes ~15 minutes):
 
@@ -144,7 +144,7 @@ spec: {}
 EOF
 ```
 
-> **Optional observability:** Calico 3.32 also ships the Goldmane flow aggregator and the Whisker UI. Add them by applying `Goldmane` and `Whisker` resources (`kind: Goldmane` / `kind: Whisker`, `metadata.name: default`) — see the official docs. They are not required for policy enforcement.
+> **Optional observability:** Calico 3.32 also ships the Goldmane flow aggregator and the Whisker UI. Add them by applying `Goldmane` and `Whisker` resources (`kind: Goldmane` / `kind: Whisker`, `metadata.name: default`) - see the official docs. They are not required for policy enforcement.
 
 ---
 

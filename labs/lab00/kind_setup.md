@@ -1,4 +1,4 @@
-# LAB00 — kind cluster (common setup)
+# LAB00 - kind cluster (common setup)
 
 This lab provisions an Ubuntu EC2 instance, installs the tooling, and creates a 3-node [kind](https://kind.sigs.k8s.io/) cluster with the default CNI disabled and API-server audit logging enabled. Once the cluster is up, continue with a CNI install:
 
@@ -18,7 +18,7 @@ This lab provisions an Ubuntu EC2 instance, installs the tooling, and creates a 
 
 ---
 
-## 1. Prerequisites — Launch an EC2 instance
+## 1. Prerequisites - Launch an EC2 instance
 
 Create an SSH key pair and launch the instance. The image ID is resolved from the Canonical SSM public parameter, so you always get the current Ubuntu 22.04 LTS AMI.
 
@@ -162,7 +162,7 @@ kubectl cluster-info --context kind-kind
 kubectl get no
 ```
 
-The nodes stay `NotReady` and CoreDNS stays `Pending` until you install a CNI — this is expected.
+The nodes stay `NotReady` and CoreDNS stays `Pending` until you install a CNI - this is expected.
 
 ```bash
 kubectl get po -A
