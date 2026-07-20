@@ -126,7 +126,9 @@ helm install cilium cilium/cilium --version 1.19.6 \
 cilium status --wait
 cilium connectivity test #optional
 ```
-
+```
+kubectl get no 
+```
 ### Install Cilium observablity
 ```
 helm upgrade cilium cilium/cilium --version 1.19.6 \
@@ -140,7 +142,9 @@ helm upgrade cilium cilium/cilium --version 1.19.6 \
 cilium hubble port-forward&
 ```
 ```
-$ hubble status
+hubble status
+```
+```
 Healthcheck (via localhost:4245): Ok
 Current/Max Flows: 0/0
 Flows/s: N/A
@@ -150,11 +154,11 @@ Unavailable Nodes: 4
   - kind-worker
   - kind-worker2
   - kind-worker3
-
-$ hubble observe
 ```
 ```
-$ hubble observe
+hubble observe
+```
+```
 Jan 29 14:47:36.330: 10.10.0.103:33058 <> 10.10.1.88:4240 to-overlay FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:36.330: 10.10.0.103:43218 <> 10.10.2.243:4240 to-overlay FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:41.454: 10.10.0.180:4240 <> 10.10.1.221:58542 to-overlay FORWARDED (TCP Flags: ACK)
