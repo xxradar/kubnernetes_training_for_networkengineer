@@ -48,18 +48,16 @@ NAME                                READY   STATUS    RESTARTS   AGE    IP      
 nginx-pod                           1/1     Running   0          138m   10.10.162.130   kind-worker    <none>           <none>            environment=prod,name=nginx
 ```
 ### Exercise
-- Create additional pods
-- Delete one of these pods. Does it come back?
+Work through these yourself, the interesting part is figuring out the "why".
 
-### Explore it yourself
-Start poking at the network behavior, since the answers are more interesting than the commands:
+* Create a new namespace `lab01-exercise` (namespace names can't contain underscores, so no `lab01_exercise`)
+* Create an `nginx` pod in the new namespace
+* Find the IP address of the new pod (`kubectl get po -n lab01-exercise -o wide`)
+* Start an interactive throwaway pod in the same namespace:
+  `kubectl run tmp -it -n lab01-exercise --rm --image ubuntu -- bash`
+* From inside it, try to `curl` the nginx pod's IP
+* If it fails, work out why and fix it (what does a bare `ubuntu` image not ship with?)
+* Exit the pod (`exit`)
+* Start the ubuntu pod again. What do you see, and what does that tell you about a pod's filesystem?
 
-- Which subnet do the pod IPs come from, and where was that decided? (Hint: LAB00.)
-- From one pod, can you reach another pod's IP directly? Try:
-  `kubectl exec -n prod-nginx nginx-pod -- curl -s <other-pod-ip>`
-- Delete the pod and recreate it, does it get the **same IP** back? What does that imply for anything that hard-codes a pod IP?
-- Look inside the pod's network stack: `kubectl exec -n prod-nginx nginx-pod -- ip addr`. How many interfaces? Where does the other end live?
-- Are two pods on **different nodes** reachable without NAT? Check the `NODE` column with `-o wide` and test.
-- How does a pod's IP relate to its **node's** IP (`kubectl get nodes -o wide`)? Same subnet or different?
-
-> Takeaway for network engineers: pods are cattle, not pets, their IPs are ephemeral. That's exactly why **Services** (next labs) exist: a stable virtual IP in front of a changing set of pod IPs.
+> Takeaway for network engineers: pod IPs are ephemeral and a pod's filesystem resets on restart. That's why **Services** (next labs) give you a stable virtual IP in front of changing pods.
