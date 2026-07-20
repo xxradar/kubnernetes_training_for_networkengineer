@@ -1,15 +1,15 @@
-# Introduction to Kubernetes 
+# Introduction to Kubernetes
 ## Fast track for network and security engineers
 
-* [Setting up a K8s Cluster - Lab0](labs/lab0/readme.md)
-* [Learning about pods - Lab1](labs/lab1/readme.md)
-* [Learning about deployments and replicasets - Lab2](labs/lab2)
-* [Services - ClusterIP - Lab3](labs/lab3)
-* [Services - NodePort - Lab4](labs/lab4)
-* [Services - LoadBalancer - Lab5](labs/lab5)
-* [Ingress controllers - Lab6](labs/lab6)
-* [Kubernetes native network security policies - Lab7](labs/lab7)
-* [Global network security policies - Lab8](labs/lab8)
-* [Accessing kubernetes services when things get though - Lab9](labs/lab9)
-* [Troubleshooting - Lab10](labs/lab10)
-* [Fortinet K8S SDN connector - Lab11](labs/lab11)
+* [Setting up a K8s Cluster - Lab00](labs/lab00/README.md)
+* [Learning about pods - Lab01](labs/lab01/README.md)
+* [Learning about deployments and replicasets - Lab02](labs/lab02/README.md)
+* [Services - ClusterIP - Lab03](labs/lab03/README.md)
+* [Services - NodePort - Lab04](labs/lab04/README.md)
+* [Services - LoadBalancer - Lab05](labs/lab05/README.md)
+* [Ingress controllers - Lab06](labs/lab06/README.md)
+* [Kubernetes native network security policies - Lab07](labs/lab07/README.md)
+* [Global network security policies - Lab08](labs/lab08/README.md)
+* [Accessing kubernetes services when things get tough - Lab09](labs/lab09/README.md)
+* [Troubleshooting - Lab10](labs/lab10/README.md)
+* [Fortinet K8S SDN connector - Lab11](labs/lab11/README.md)
