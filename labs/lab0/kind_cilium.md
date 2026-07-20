@@ -184,6 +184,9 @@ Install with WireGuard transparent encryption, kube-proxy replacement, and the i
 ```bash
 helm install cilium cilium/cilium --version 1.19.6 \
     --namespace kube-system \
+    --set ipam.mode=cluster-pool \
+    --set ipam.operator.clusterPoolIPv4PodCIDRList={10.10.0.0/16} \
+    --set ipam.operator.clusterPoolIPv4MaskSize=24 \
     --set hubble.relay.enabled=true \
     --set hubble.ui.enabled=true \
     --set encryption.enabled=true \
@@ -197,10 +200,14 @@ helm install cilium cilium/cilium --version 1.19.6 \
 
 | Flag | Purpose |
 |------|---------|
+| `ipam.operator.clusterPoolIPv4PodCIDRList={10.10.0.0/16}` | Pod IP pool — set to match the kind `podSubnet` so pods land in `10.10.0.0/16` (Cilium otherwise uses its own `10.0.0.0/8` default) |
+| `ipam.operator.clusterPoolIPv4MaskSize=24` | Per-node slice of the pool (`/24` = 254 pods/node) |
 | `encryption.type=wireguard` | Transparent pod-to-pod encryption |
 | `kube-proxy-replacement=strict` | Cilium handles service routing (eBPF), no kube-proxy |
 | `ingressController.enabled=true` | Built-in Cilium ingress |
 | `loadBalancer.l7.backend=envoy` | Envoy-based L7 load balancing |
+
+> **Why these IPAM flags?** In its default `cluster-pool` mode, Cilium allocates pod IPs from its own pool and ignores the kind `podSubnet`. These flags point that pool at `10.10.0.0/16` so the CIDR in your kind config is actually used.
 
 Wait for Cilium to come up, then (optionally) run the connectivity test:
 
@@ -239,15 +246,12 @@ Example output:
 
 ```text
 Healthcheck (via localhost:4245): Ok
-Current/Max Flows: 0/0
-Flows/s: N/A
-Connected Nodes: 0/4
-Unavailable Nodes: 4
-  - kind-control-plane
-  - kind-worker
-  - kind-worker2
-  - kind-worker3
+Current/Max Flows: 4096/4096 (100.00%)
+Flows/s: 12.34
+Connected Nodes: 3/3
 ```
+
+> The cluster has 3 nodes (`kind-control-plane`, `kind-worker`, `kind-worker2`). Right after starting the port-forward you may briefly see `Connected Nodes: 0/3` until the relay connects to every agent.
 
 Observe live flows:
 
@@ -262,8 +266,8 @@ Jan 29 14:47:36.330: 10.10.0.103:33058 <> 10.10.1.88:4240 to-overlay FORWARDED (
 Jan 29 14:47:36.330: 10.10.0.103:43218 <> 10.10.2.243:4240 to-overlay FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:41.454: 10.10.0.180:4240 <> 10.10.1.221:58542 to-overlay FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:41.455: 10.10.1.221:58542 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
-Jan 29 14:47:44.267: 10.10.0.180:4240 <> 10.10.3.12:56052 to-overlay FORWARDED (TCP Flags: ACK)
-Jan 29 14:47:44.267: 10.10.3.12:56052 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:44.267: 10.10.0.180:4240 <> 10.10.2.12:56052 to-overlay FORWARDED (TCP Flags: ACK)
+Jan 29 14:47:44.267: 10.10.2.12:56052 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:46.062: 10.10.0.180:4240 <> 10.10.2.226:43864 to-overlay FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:46.063: 10.10.2.226:43864 -> 10.10.0.180:4240 to-endpoint FORWARDED (TCP Flags: ACK)
 Jan 29 14:47:49.134: 10.10.0.103:37572 <- 10.10.0.180:4240 to-stack FORWARDED (TCP Flags: ACK)

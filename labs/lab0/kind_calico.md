@@ -9,7 +9,7 @@ This lab builds a 3-node Kubernetes cluster in [kind](https://kind.sigs.k8s.io/)
 | Component | Value |
 |-----------|-------|
 | Cloud / region | AWS EC2, `eu-west-3` |
-| Instance | `t2.xlarge` (4 vCPU / 16 GB), 40 GB encrypted root disk |
+| Instance | `t2.xlarge` (4 vCPU / 16 GB) |
 | Cluster | 1 control-plane + 2 workers (kind) |
 | Pod CIDR | `192.168.0.0/16` |
 | Service CIDR | `10.11.0.0/16` |
@@ -19,32 +19,41 @@ This lab builds a 3-node Kubernetes cluster in [kind](https://kind.sigs.k8s.io/)
 
 ## 1. Prerequisites — Launch an EC2 instance
 
-Replace `<SSH_KEYNAME>` with an existing key pair in `eu-west-3` (or create one first with `aws ec2 create-key-pair`).
+Create an SSH key pair and launch the training instance.
 
 ```bash
 export AWS_PAGER=""
+
+aws ec2 create-key-pair \
+  --key-name training \
+  --region eu-west-3 \
+  --query 'KeyMaterial' \
+  --output text > training.pem
+
+chmod 400 training.pem
 
 aws ec2 run-instances \
   --image-id ami-0a2387cb2c63a860e \
   --region eu-west-3 \
   --instance-type t2.xlarge \
-  --key-name <SSH_KEYNAME> \
+  --key-name training \
   --associate-public-ip-address \
-  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyInstance}]' \
-  --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=40,Encrypted=true,VolumeType=gp2,DeleteOnTermination=true}'
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=k8straining}]'
 ```
 
-Grab the public IP once the instance is running, then SSH in with `ssh -i <SSH_KEYNAME>.pem ubuntu@<PUBLIC_IP>`.
+Grab the public IP once the instance is running, then SSH in with `ssh -i training.pem ubuntu@<PUBLIC_IP>`.
 
 ```bash
 aws ec2 describe-instances \
   --region eu-west-3 \
   --filters \
-    "Name=tag:Name,Values=MyInstance" \
+    "Name=tag:Name,Values=k8straining" \
     "Name=instance-state-name,Values=running,pending" \
   --query 'Reservations[].Instances[].PublicIpAddress' \
   --output text
 ```
+
+> **Tip:** The `--filters` tag value must match the `Name` tag you set above (`k8straining`), otherwise the query returns nothing.
 
 ---
 
