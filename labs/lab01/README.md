@@ -4,6 +4,12 @@ A **pod** is the smallest deployable unit in Kubernetes, one or more containers 
 
 A **namespace** is a logical boundary for grouping and isolating resources, think of it like a tenant or VRF for your objects (it scopes names and, later, network policy).
 
+First, list the namespaces that already exist on the cluster:
+```
+kubectl get ns
+```
+You will see the built-in ones such as `default`, `kube-system`, and `kube-public`.
+
 Create a namespace
 ```
 kubectl create ns prod-nginx
