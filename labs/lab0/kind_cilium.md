@@ -191,7 +191,7 @@ helm install cilium cilium/cilium --version 1.19.6 \
     --set hubble.ui.enabled=true \
     --set encryption.enabled=true \
     --set encryption.type=wireguard \
-    --set kube-proxy-replacement=strict \
+    --set kubeProxyReplacement=true \
     --set ingressController.enabled=true \
     --set ingressController.loadbalancerMode=shared \
     --set ingressController.service.type="NodePort" \
@@ -203,7 +203,7 @@ helm install cilium cilium/cilium --version 1.19.6 \
 | `ipam.operator.clusterPoolIPv4PodCIDRList={10.10.0.0/16}` | Pod IP pool — set to match the kind `podSubnet` so pods land in `10.10.0.0/16` (Cilium otherwise uses its own `10.0.0.0/8` default) |
 | `ipam.operator.clusterPoolIPv4MaskSize=24` | Per-node slice of the pool (`/24` = 254 pods/node) |
 | `encryption.type=wireguard` | Transparent pod-to-pod encryption |
-| `kube-proxy-replacement=strict` | Cilium handles service routing (eBPF), no kube-proxy |
+| `kubeProxyReplacement=true` | Cilium handles service routing in eBPF, replacing kube-proxy |
 | `ingressController.enabled=true` | Built-in Cilium ingress |
 | `loadBalancer.l7.backend=envoy` | Envoy-based L7 load balancing |
 
