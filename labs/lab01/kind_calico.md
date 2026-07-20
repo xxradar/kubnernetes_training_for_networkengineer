@@ -1,4 +1,4 @@
-# LAB00 - Calico CNI
+# LAB01 - Calico CNI
 
 Installs [Calico](https://docs.tigera.io/calico/latest/about/) as the CNI on the kind cluster from [kind_setup.md](kind_setup.md).
 

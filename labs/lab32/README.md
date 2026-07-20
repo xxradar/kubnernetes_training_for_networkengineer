@@ -1,4 +1,4 @@
-# LAB10 - Troubleshooting
+# LAB32 - Troubleshooting
 ### executing commands inside pods
 ```
 kubectl get po -n prod-nginx

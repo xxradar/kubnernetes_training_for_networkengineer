@@ -1,4 +1,4 @@
-# LAB08 - Global network security policies
+# LAB21 - Global network security policies
 _Note: this will not work on EKS. For EKS you must install the correct version of calicoctl ([install](calicoctl.md)). To apply the policies use calicoctl instead of kubectl_
 ```
 kubectl apply -f - <<EOF
@@ -99,7 +99,7 @@ kubectl run -it --rm  --image xxradar/hackon debug -n myhackns -l mode=debug
 curl my-nginx-clusterip.prod-nginx 
 ```
 
-## LAB 8-bis Cilium cluster wide network policy example
+## LAB21-bis Cilium cluster wide network policy example
 ```
 kubectl apply -f -<<EOF
 apiVersion: "cilium.io/v2"

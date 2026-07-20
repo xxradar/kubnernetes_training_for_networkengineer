@@ -1,10 +1,10 @@
-# LAB03 - Services - ClusterIP
+# LAB13 - Services - ClusterIP
 
 A **Service** of type **ClusterIP** gives you a stable virtual IP (a VIP) and a DNS name in front of a changing set of pods. It load-balances to every pod whose labels match the service `selector`, and the VIP is reachable only from **inside** the cluster.
 
 For network engineers: the ClusterIP is not bound to any interface, it is a virtual address that the dataplane (kube-proxy, or Cilium eBPF in our setup) DNATs to a real pod IP. The **Endpoints** object is the live list of pod IPs behind the service, updated automatically as pods come and go. The DNS name is `<service>.<namespace>` (fully qualified: `<service>.<namespace>.svc.cluster.local`).
 
-> Continues from LAB02: the `prod-nginx` namespace and the nginx deployment already exist.
+> Continues from LAB05: the `prod-nginx` namespace and the nginx deployment already exist.
 
 Create a service of type ClusterIP
 ```
@@ -28,7 +28,7 @@ kubectl get svc -n prod-nginx -o wide
 kubectl describe svc -n prod-nginx my-nginx-clusterip
 kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
 ```
-Compare the Endpoints list with the pod IPs from LAB02. They should be the same set, and the service picks pods purely by the `selector` labels.
+Compare the Endpoints list with the pod IPs from LAB05. They should be the same set, and the service picks pods purely by the `selector` labels.
 
 ## Quick exercise: scaling and the service
 Scale the deployment and watch the service track it. The ClusterIP (the VIP) never changes, but the Endpoints list grows and shrinks with the pods.

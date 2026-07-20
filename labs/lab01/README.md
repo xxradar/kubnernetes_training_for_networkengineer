@@ -1,4 +1,4 @@
-# LAB00 - Install a kubernetes cluster
+# LAB01 - Setting up a Kubernetes cluster
 
 Before you can explore anything, you need a cluster to work on. This lab gives you several ways to get one, from a throwaway local cluster to a managed cloud cluster. For the rest of the course a single **kind** cluster on an Ubuntu host is enough, and it is the option we run through in detail. The cloud options (EKS, AKS, GKE) are here so you can see how the same concepts look on managed platforms with their own CNIs.
 

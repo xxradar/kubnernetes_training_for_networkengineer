@@ -1,4 +1,4 @@
-# LAB00 - kind cluster (common setup)
+# LAB01 - kind cluster (common setup)
 
 This lab provisions an Ubuntu EC2 instance, installs the tooling, and creates a 3-node [kind](https://kind.sigs.k8s.io/) cluster with the default CNI disabled and API-server audit logging enabled. Once the cluster is up, continue with a CNI install:
 

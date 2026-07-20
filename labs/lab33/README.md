@@ -1,4 +1,4 @@
-# LAB11 - Fortinet K8S SDN connector
+# LAB33 - Fortinet K8S SDN connector
 
 ### K8S SDN connector requirements
 - Service Account 

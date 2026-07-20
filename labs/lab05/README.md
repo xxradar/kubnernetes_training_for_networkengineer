@@ -1,10 +1,10 @@
-# LAB02 - Deployments and ReplicaSets
+# LAB05 - Deployments and ReplicaSets
 
 A **Deployment** declares the desired state of your app and manages a **ReplicaSet**, which keeps a fixed number of identical **pod** replicas running. If a pod dies or a node fails, the ReplicaSet recreates it. This is the self-healing reconciliation loop (desired state versus actual state), which a network engineer can picture as an auto-recovering pool of identical backends.
 
-Two things matter for networking. Every replacement pod gets a **new IP**, and pods are tied to their ReplicaSet by **labels** (the `selector`). That constant churn is exactly why you never target a pod IP directly, and why Services (LAB03) exist.
+Two things matter for networking. Every replacement pod gets a **new IP**, and pods are tied to their ReplicaSet by **labels** (the `selector`). That constant churn is exactly why you never target a pod IP directly, and why Services (LAB13) exist.
 
-> LAB02 to LAB05 run in sequence in the `prod-nginx` namespace, created in LAB01. Each lab builds on the previous one.
+> The `prod-nginx` namespace is created in LAB04 (first pod). This lab and the service labs (LAB13 to LAB15) build on it in sequence.
 
 Create a deployment
 ```
@@ -48,7 +48,7 @@ Look at the pod names: `nginx-deployment-<replicaset-hash>-<random>`. The `pod-t
 **Labels** are key/value tags you attach to objects (here `app: nginx` and `env: prod`). On their own they do nothing. A **selector** is a query that matches objects by their labels, and this is the glue that loosely couples things in Kubernetes without anyone hard-coding a pod IP or name.
 
 * The Deployment's ReplicaSet owns exactly the pods that match its `spec.selector.matchLabels` (here `app: nginx`).
-* A Service (LAB03) picks its backend pods the same way, with a label selector.
+* A Service (LAB13) picks its backend pods the same way, with a label selector.
 * The `pod-template-hash` label is added automatically by the Deployment, so pods from different rollout revisions can be told apart.
 
 Look at, and filter by, labels from the CLI:
@@ -68,7 +68,7 @@ kubectl get po -n prod-nginx -o wide
 ```
 Or declaratively by changing `spec.replicas` in the manifest and re-applying it.
 
-For network engineers: every pod added by scaling up is a new pod with a **new IP**, possibly on a different node, and every pod removed by scaling down takes its IP with it. A Service in front (LAB03) tracks this automatically through its Endpoints, so the backend pool grows and shrinks while the address clients use stays the same.
+For network engineers: every pod added by scaling up is a new pod with a **new IP**, possibly on a different node, and every pod removed by scaling down takes its IP with it. A Service in front (LAB13) tracks this automatically through its Endpoints, so the backend pool grows and shrinks while the address clients use stays the same.
 
 Watch it happen live: run this in one terminal, then scale up or down in another.
 ```
@@ -88,4 +88,4 @@ Work through these and reason about the "why".
   `kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment`
   `kubectl get po -n prod-nginx -o wide`
 
-> Takeaway for network engineers: the ReplicaSet continuously reconciles to the desired replica count, so pods and their IPs come and go. You manage the set through labels, not through individual pods. That moving target is what a Service sits in front of, next in LAB03.
+> Takeaway for network engineers: the ReplicaSet continuously reconciles to the desired replica count, so pods and their IPs come and go. You manage the set through labels, not through individual pods. That moving target is what a Service sits in front of, next in LAB13.

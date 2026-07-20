@@ -1,4 +1,4 @@
-# LAB00 - EKS Cluster with Calico Network Policy
+# LAB01 - EKS Cluster with Calico Network Policy
 
 This lab creates a managed [Amazon EKS](https://aws.amazon.com/eks/) cluster with [eksctl](https://eksctl.io/) using a cluster config file, then adds [Calico](https://docs.tigera.io/calico/latest/about/) **for network policy** on top of the AWS VPC CNI.
 
