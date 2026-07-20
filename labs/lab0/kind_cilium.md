@@ -129,7 +129,7 @@ cilium connectivity test #optional
 
 ### Install Cilium observablity
 ```
-helm upgrade cilium cilium/cilium --version 1.14.1 \
+helm upgrade cilium cilium/cilium --version 1.19.6 \
    --namespace kube-system \
    --reuse-values \
    --set hubble.relay.enabled=true \
