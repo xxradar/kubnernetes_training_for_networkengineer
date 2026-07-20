@@ -4,11 +4,7 @@ A **Deployment** declares the desired state of your app and manages a **ReplicaS
 
 Two things matter for networking. Every replacement pod gets a **new IP**, and pods are tied to their ReplicaSet by **labels** (the `selector`). That constant churn is exactly why you never target a pod IP directly, and why Services (LAB03) exist.
 
-## Setup
-This lab uses the `prod-nginx` namespace. Create it if it does not exist yet (skip if LAB01 already created it):
-```
-kubectl create ns prod-nginx
-```
+> LAB02 to LAB05 run in sequence in the `prod-nginx` namespace, created in LAB01. Each lab builds on the previous one.
 
 Create a deployment
 ```

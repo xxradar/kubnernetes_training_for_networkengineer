@@ -4,49 +4,7 @@ A **NodePort** Service exposes your app on a static port on **every node** in th
 
 For network engineers: the port (default range `30000-32767`) is open on **all** nodes, even the ones not running a matching pod, because the node forwards the traffic internally. That makes it a simple way to reach an app from outside the cluster without a cloud load balancer, at the cost of exposing raw node IPs and high ports.
 
-## Setup
-This lab uses the `prod-nginx` namespace with the nginx deployment, plus the LAB03 ClusterIP service for comparison. Create whatever does not exist yet:
-```
-kubectl create ns prod-nginx
-kubectl apply -f - <<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-  namespace: prod-nginx
-  labels:
-    app: nginx-deployment
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-        env: prod
-    spec:
-      containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-EOF
-kubectl apply -f - <<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-nginx-clusterip
-  namespace: prod-nginx
-spec:
-  ports:
-  - port: 80
-    protocol: TCP
-  selector:
-    app: nginx
-EOF
-```
+> Continues from LAB03: the nginx deployment and the `my-nginx-clusterip` service already exist.
 
 ## Create a service of type NodePort
 ```

@@ -4,36 +4,7 @@ A **LoadBalancer** Service asks the underlying platform to provision an **extern
 
 For network engineers: on a managed cloud (EKS, AKS, GKE) this provisions a cloud load balancer and the `EXTERNAL-IP` fills in automatically. On a self-managed or KIND cluster there is no external load balancer by default, so the `EXTERNAL-IP` stays `<Pending>` until you add something like [MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/) to hand out addresses.
 
-## Setup
-This lab uses the `prod-nginx` namespace with the nginx deployment. Create whatever does not exist yet:
-```
-kubectl create ns prod-nginx
-kubectl apply -f - <<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-  namespace: prod-nginx
-  labels:
-    app: nginx-deployment
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-        env: prod
-    spec:
-      containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-EOF
-```
+> Continues from LAB04: the `prod-nginx` namespace and the nginx deployment already exist.
 
 ## Setting up MetalLB (KIND only)
 On a managed cloud cluster you can skip this section. On KIND you need MetalLB so a LoadBalancer service gets an external IP. Check the Docker IPAM range carefully and match the MetalLB pool to it.
