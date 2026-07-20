@@ -87,7 +87,8 @@ newgrp docker
 ## 4. Install Kubernetes tooling (kubectl)
 
 ```bash
-sudo curl -L "https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
+VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+sudo curl -L "https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 kubectl version --client
 ```
@@ -97,7 +98,7 @@ kubectl version --client
 ## 5. Install kind
 
 ```bash
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.32.0/kind-linux-amd64
 sudo mv ./kind /usr/local/bin/kind
 sudo chmod +x /usr/local/bin/kind
 kind get clusters
@@ -146,7 +147,7 @@ kubectl get po -A
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
 ```
 
-> This manifest deploys the Calico operator and its resources into the `calico-system` namespace. It may take a minute or two to pull images and become ready.
+> This is the **manifest** install (not the Tigera operator), so `calico-node` and `calico-kube-controllers` are deployed into the **`kube-system`** namespace — there is no `calico-system` namespace with this method. It may take a minute or two to pull images and become ready.
 
 ---
 
@@ -155,13 +156,19 @@ kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/
 Watch the Calico pods roll out (press `Ctrl+C` to exit the watch):
 
 ```bash
-watch kubectl get po -n calico-system
+watch kubectl get po -n kube-system -l k8s-app=calico-node
 ```
 
-When all pods are `Running`, the nodes should transition to `Ready`:
+When all `calico-node` pods are `Running`, the nodes should transition to `Ready`:
 
 ```bash
 kubectl get no -o wide
+```
+
+Pods will get addresses from Calico's default IP pool inside the `192.168.0.0/16` pod subnet, for example:
+
+```bash
+kubectl get po -n kube-system -o wide
 ```
 
 > **Next step:** Calico's `calicoctl` CLI (used in later labs) lets you inspect IP pools, BGP peers, and network policy. See `labs/lab8/calicoctl.md`.
