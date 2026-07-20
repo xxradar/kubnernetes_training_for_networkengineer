@@ -60,6 +60,21 @@ kubectl get po -n prod-nginx -L app -L env               # show these label valu
 ```
 This is exactly the matching the ReplicaSet does to decide which pods it owns, and what a Service does to decide where to send traffic.
 
+## Scaling
+Scaling just changes the **desired** replica count, and the ReplicaSet reconciles by adding or removing pods until actual matches desired. Scale imperatively:
+```
+kubectl scale -n prod-nginx --replicas=5 deploy/nginx-deployment
+kubectl get po -n prod-nginx -o wide
+```
+Or declaratively by changing `spec.replicas` in the manifest and re-applying it.
+
+For network engineers: every pod added by scaling up is a new pod with a **new IP**, possibly on a different node, and every pod removed by scaling down takes its IP with it. A Service in front (LAB03) tracks this automatically through its Endpoints, so the backend pool grows and shrinks while the address clients use stays the same.
+
+Watch it happen live: run this in one terminal, then scale up or down in another.
+```
+kubectl get po -n prod-nginx -o wide -w
+```
+
 ### Exercise
 Work through these and reason about the "why".
 
