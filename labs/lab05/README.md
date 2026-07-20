@@ -1,91 +1,93 @@
-# LAB05 - Deployments and ReplicaSets
+# LAB15 - Services - LoadBalancer
 
-A **Deployment** declares the desired state of your app and manages a **ReplicaSet**, which keeps a fixed number of identical **pod** replicas running. If a pod dies or a node fails, the ReplicaSet recreates it. This is the self-healing reconciliation loop (desired state versus actual state), which a network engineer can picture as an auto-recovering pool of identical backends.
+A **LoadBalancer** Service asks the underlying platform to provision an **external IP** that routes into the service. It is a superset of the previous types: it still gets a cluster-internal VIP (ClusterIP) and a node port (NodePort), and adds a real external address on top.
 
-Two things matter for networking. Every replacement pod gets a **new IP**, and pods are tied to their ReplicaSet by **labels** (the `selector`). That constant churn is exactly why you never target a pod IP directly, and why Services (LAB13) exist.
+For network engineers: on a managed cloud (EKS, AKS, GKE) this provisions a cloud load balancer and the `EXTERNAL-IP` fills in automatically. On a self-managed or KIND cluster there is no external load balancer by default, so the `EXTERNAL-IP` stays `<Pending>` until you add something like [MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/) to hand out addresses.
 
-> The `prod-nginx` namespace is created in LAB04 (first pod). This lab and the service labs (LAB13 to LAB15) build on it in sequence.
+> Continues from LAB14: the `prod-nginx` namespace and the nginx deployment already exist.
 
-Create a deployment
+## Setting up MetalLB (KIND only)
+On a managed cloud cluster you can skip this section. On KIND you need MetalLB so a LoadBalancer service gets an external IP. Check the Docker IPAM range carefully and match the MetalLB pool to it.
+
+Install MetalLB:
+```
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/main/config/manifests/metallb-native.yaml
+```
+Wait for the MetalLB pods to reach `Running`:
+```
+kubectl get pods -n metallb-system --watch
+```
+Check the Docker IPAM range in use:
+```
+docker network inspect -f '{{.IPAM.Config}}' kind
+```
+Create the MetalLB pool, matching the addresses to the Docker `kind` network range:
 ```
 kubectl apply -f - <<EOF
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
 metadata:
-  name: nginx-deployment
-  namespace: prod-nginx
-  labels:
-    app: nginx-deployment
+  name: example
+  namespace: metallb-system
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-        env: prod
-    spec:
-      containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
+  addresses:
+  - 172.18.255.200-172.18.255.250
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: empty
+  namespace: metallb-system
 EOF
 ```
-Inspect the deployment, its pods, and the ReplicaSet it created
+You can reach the LoadBalancer IP from your lab host. To make it reachable from the outside world on a KIND cluster, add NAT rules on the host:
 ```
-kubectl get deploy -n prod-nginx -o wide
-kubectl get po -n prod-nginx -o wide
-kubectl describe deploy -n prod-nginx nginx-deployment
-kubectl get rs -n prod-nginx
-kubectl describe rs -n prod-nginx <your_rs>
-```
-Look at the pod names: `nginx-deployment-<replicaset-hash>-<random>`. The `pod-template-hash` label is what ties each pod to its ReplicaSet, and the `describe deploy` output points at the `NewReplicaSet` that owns them.
-
-## Labels and selectors
-**Labels** are key/value tags you attach to objects (here `app: nginx` and `env: prod`). On their own they do nothing. A **selector** is a query that matches objects by their labels, and this is the glue that loosely couples things in Kubernetes without anyone hard-coding a pod IP or name.
-
-* The Deployment's ReplicaSet owns exactly the pods that match its `spec.selector.matchLabels` (here `app: nginx`).
-* A Service (LAB13) picks its backend pods the same way, with a label selector.
-* The `pod-template-hash` label is added automatically by the Deployment, so pods from different rollout revisions can be told apart.
-
-Look at, and filter by, labels from the CLI:
-```
-kubectl get po -n prod-nginx --show-labels               # show every label on each pod
-kubectl get po -n prod-nginx -l app=nginx                # only pods matching this label
-kubectl get po -n prod-nginx -l env=prod,app=nginx       # AND of both labels
-kubectl get po -n prod-nginx -L app -L env               # show these label values as columns
-```
-This is exactly the matching the ReplicaSet does to decide which pods it owns, and what a Service does to decide where to send traffic.
-
-## Scaling
-Scaling just changes the **desired** replica count, and the ReplicaSet reconciles by adding or removing pods until actual matches desired. Scale imperatively:
-```
-kubectl scale -n prod-nginx --replicas=5 deploy/nginx-deployment
-kubectl get po -n prod-nginx -o wide
-```
-Or declaratively by changing `spec.replicas` in the manifest and re-applying it.
-
-For network engineers: every pod added by scaling up is a new pod with a **new IP**, possibly on a different node, and every pod removed by scaling down takes its IP with it. A Service in front (LAB13) tracks this automatically through its Endpoints, so the backend pool grows and shrinks while the address clients use stays the same.
-
-Watch it happen live: run this in one terminal, then scale up or down in another.
-```
-kubectl get po -n prod-nginx -o wide -w
+sudo iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 80 -j DNAT --to-destination 172.18.255.200:80
+sudo iptables -A FORWARD -p tcp -d 172.18.255.200 --dport 80 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 ```
 
-### Exercise
-Work through these and reason about the "why".
+## Create a service of type LoadBalancer
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-lb
+  namespace: prod-nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: nginx
+EOF
+```
+```
+kubectl get svc -n prod-nginx -o wide
+NAME                 TYPE          CLUSTER-IP      EXTERNAL-IP      PORT(S)        AGE    SELECTOR
+my-nginx-clusterip   ClusterIP     10.99.180.103   <none>           80/TCP         13m    app=nginx
+my-nginx-lb          LoadBalancer  10.107.221.36   172.18.255.200   80:31062/TCP   105s   app=nginx
+```
+Without MetalLB (or a cloud provider) the `EXTERNAL-IP` stays `<Pending>`. Note that the LoadBalancer service also has a node port (here `31062`).
 
-* Show the pod labels: `kubectl get po -n prod-nginx -o wide --show-labels`
-* Manually add a pod that matches the ReplicaSet selector, reusing the current `pod-template-hash`:
-  `kubectl run -n prod-nginx --image nginx testnginx -l app=nginx,env=prod,pod-template-hash=<your_hash>`
-  Re-check the ReplicaSet. What happened to your extra pod, and why?
-* Delete one pod from the deployment. Does it come back? Same name? Same IP?
-  `kubectl delete po -n prod-nginx <a_pod_name>`
-* Scale the deployment and watch where the new pods land (which nodes):
-  `kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment`
-  `kubectl get po -n prod-nginx -o wide`
+## Reach the service every way
+A LoadBalancer service is reachable at all three levels. Grab a node IP first:
+```
+export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].address}")
+```
+```
+curl http://127.0.0.1:31062       # via the node port on localhost
+...
+curl http://$NODE:31062           # via the node port on a node IP
+...
+curl http://<external-ip>:80      # via the external LoadBalancer IP
+...
+```
 
-> Takeaway for network engineers: the ReplicaSet continuously reconciles to the desired replica count, so pods and their IPs come and go. You manage the set through labels, not through individual pods. That moving target is what a Service sits in front of, next in LAB13.
+### Explore it yourself
+* On KIND, what does `EXTERNAL-IP` show before you install MetalLB, and after?
+* The LoadBalancer, NodePort, and ClusterIP for this app all forward to the same pods. Confirm with `kubectl get ep my-nginx-lb -n prod-nginx -o yaml`.
+* On a managed cloud, where does the external IP come from, and what actually sits in the traffic path compared to the KIND/MetalLB case?
+
+> Takeaway for network engineers: the three service types stack. ClusterIP gives an internal VIP, NodePort adds a port on every node, and LoadBalancer adds an external address on top. Which you use is about where you need to reach the app from, not about how it selects pods (that is always the label selector).

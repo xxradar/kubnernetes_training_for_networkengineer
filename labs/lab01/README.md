@@ -1,28 +1,70 @@
-# LAB01 - Setting up a Kubernetes cluster
+# LAB04 - Learning about pods
 
-Before you can explore anything, you need a cluster to work on. This lab gives you several ways to get one, from a throwaway local cluster to a managed cloud cluster. For the rest of the course a single **kind** cluster on an Ubuntu host is enough, and it is the option we run through in detail. The cloud options (EKS, AKS, GKE) are here so you can see how the same concepts look on managed platforms with their own CNIs.
+A **pod** is the smallest deployable unit in Kubernetes, one or more containers that share a single network namespace. In network terms: every pod gets its **own IP address** (from the pod CIDR you configured in LAB01), and containers inside a pod reach each other over `localhost`. Pod-to-pod traffic is routed flat, with **no NAT** between pods.
 
-Pick one path and stick with it:
+A **namespace** is a logical boundary for grouping and isolating resources, think of it like a tenant or VRF for your objects (it scopes names and, later, network policy).
 
-* **kind** on an Ubuntu VM: fast, cheap, and what the later labs assume. Start with the [common setup](kind_setup.md), then add [Cilium](kind_cilium.md) or [Calico](kind_calico.md).
-* A managed cloud cluster if you want to compare networking on EKS, AKS, or GKE.
-
-## Get the lab material onto your host
-
-If you are using the kind path, first SSH into your Ubuntu host (see [common setup](kind_setup.md) for launching it), then install git and clone this repo so you have all the manifests locally:
+First, list the namespaces that already exist on the cluster:
 ```
-sudo apt-get update && sudo apt-get install -y git
-git clone https://github.com/xxradar/kubernetes_training_for_networkengineer.git
-cd kubernetes_training_for_networkengineer
+kubectl get ns
 ```
-From here on, each lab lives under `labs/labXX/`.
+You will see the built-in ones such as `default`, `kube-system`, and `kube-public`.
 
-## Cluster options
+Create a namespace
+```
+kubectl create ns prod-nginx
+```
+Deploy a a single pod in the newly create namespace
+```
+kubectl apply -f pod.yaml
+```
+or 
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: prod-nginx
+  labels:
+    name: nginx
+    environment: prod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+EOF
+```
+Analyse the output of kubectl with the different flags
+```
+kubectl get po                #show pods in default namespace
+kubectl get po -n prod-nginx  #show pods in namespace prod-nginx
+kubectl get po -A             #show all pods in all namespaces
+```
+```
+kubectl get po -n prod-nginx -o wide    #show additional information like POD IP address and NODE information
+NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES
+nginx-pod                           1/1     Running   0          136m   10.10.162.130   kind-worker    <none>           <none>
+```
+```
+kubectl get po -n prod-nginx -o wide --show-labels   #show pod label information
+NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES   LABELS
+nginx-pod                           1/1     Running   0          138m   10.10.162.130   kind-worker    <none>           <none>            environment=prod,name=nginx
+```
+### Exercise
+Work through these yourself, the interesting part is figuring out the "why".
 
-* [Rancher Desktop](https://rancherdesktop.io/)
-* Kind cluster - [common setup](kind_setup.md), then [Cilium](kind_cilium.md) or [Calico](kind_calico.md)
-* [EKS cluster - Calico (eksctl)](eks_cluster.md)
-* [EKS cluster - Terraform (default AWS CNI)](eks_cluster_terraform.md)
-* [AKS cluster - Terraform (default Azure CNI)](aks_cluster_terraform.md)
-* [GKE cluster - Terraform (default GKE networking)](gke_cluster_terraform.md)
-* [Kubeadm, containerd & K8S - Calico & Cilium](https://github.com/xxradar/k8s-calico-oss-install-containerd)
+* Create a new namespace `lab01-exercise` (namespace names can't contain underscores, so no `lab01_exercise`)
+* Create an `nginx` pod in the new namespace
+* Find the IP address of the new pod
+* Start an interactive throwaway pod in the same namespace:
+  `kubectl run tmp -it -n lab01-exercise --rm --image ubuntu -- bash`
+* From inside it, try to `curl` the nginx pod's IP
+* If it fails, work out why and fix it (what does a bare `ubuntu` image not ship with?)
+* Exit the pod (`exit`)
+* Start the ubuntu pod again. What do you see, and what does that tell you about a pod's filesystem?
+* Now run the throwaway pod in a **different** namespace (for example `default`) and `curl` the same nginx pod IP over in `lab01-exercise`. Does it still work? What does that tell you about whether a namespace is a network boundary by default?
+
+> Takeaway for network engineers: pod IPs are ephemeral and a pod's filesystem resets on restart, so **Services** (next labs) give you a stable virtual IP in front of changing pods. And a namespace isolates names, not traffic, cross-namespace pod-to-pod reachability is open by default until you add a **NetworkPolicy** (LAB20 and LAB21).

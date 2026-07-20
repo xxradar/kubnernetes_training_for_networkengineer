@@ -1,70 +1,60 @@
-# LAB04 - Learning about pods
+# LAB14 - Services - NodePort
 
-A **pod** is the smallest deployable unit in Kubernetes, one or more containers that share a single network namespace. In network terms: every pod gets its **own IP address** (from the pod CIDR you configured in LAB01), and containers inside a pod reach each other over `localhost`. Pod-to-pod traffic is routed flat, with **no NAT** between pods.
+A **NodePort** Service exposes your app on a static port on **every node** in the cluster. Traffic to `<any-node-IP>:<nodePort>` is picked up by the dataplane (kube-proxy, or Cilium eBPF) and load-balanced to the pods behind the service. A NodePort is a superset of a ClusterIP: it still gets a cluster-internal VIP, and adds the node-level port on top.
 
-A **namespace** is a logical boundary for grouping and isolating resources, think of it like a tenant or VRF for your objects (it scopes names and, later, network policy).
+For network engineers: the port (default range `30000-32767`) is open on **all** nodes, even the ones not running a matching pod, because the node forwards the traffic internally. That makes it a simple way to reach an app from outside the cluster without a cloud load balancer, at the cost of exposing raw node IPs and high ports.
 
-First, list the namespaces that already exist on the cluster:
-```
-kubectl get ns
-```
-You will see the built-in ones such as `default`, `kube-system`, and `kube-public`.
+> Continues from LAB13: the nginx deployment and the `my-nginx-clusterip` service already exist.
 
-Create a namespace
-```
-kubectl create ns prod-nginx
-```
-Deploy a a single pod in the newly create namespace
-```
-kubectl apply -f pod.yaml
-```
-or 
+## Create a service of type NodePort
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
-kind: Pod
+kind: Service
 metadata:
-  name: nginx-pod
+  name: my-nginx-nodeport
   namespace: prod-nginx
-  labels:
-    name: nginx
-    environment: prod
 spec:
-  containers:
-  - name: nginx
-    image: nginx
-    ports:
-    - containerPort: 80
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: nginx
 EOF
 ```
-Analyse the output of kubectl with the different flags
+Look at the two services side by side. Note the `PORT(S)` column: the NodePort shows `80:<nodePort>/TCP`.
 ```
-kubectl get po                #show pods in default namespace
-kubectl get po -n prod-nginx  #show pods in namespace prod-nginx
-kubectl get po -A             #show all pods in all namespaces
+kubectl get svc -n prod-nginx -o wide
+NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE    SELECTOR
+my-nginx-clusterip   ClusterIP   10.99.180.103   <none>        80/TCP         13m    app=nginx
+my-nginx-nodeport    NodePort    10.107.221.36   <none>        80:31062/TCP   105s   app=nginx
 ```
-```
-kubectl get po -n prod-nginx -o wide    #show additional information like POD IP address and NODE information
-NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES
-nginx-pod                           1/1     Running   0          136m   10.10.162.130   kind-worker    <none>           <none>
-```
-```
-kubectl get po -n prod-nginx -o wide --show-labels   #show pod label information
-NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES   LABELS
-nginx-pod                           1/1     Running   0          138m   10.10.162.130   kind-worker    <none>           <none>            environment=prod,name=nginx
-```
-### Exercise
-Work through these yourself, the interesting part is figuring out the "why".
+Note your own allocated node port (here `31062`) and use it below.
 
-* Create a new namespace `lab01-exercise` (namespace names can't contain underscores, so no `lab01_exercise`)
-* Create an `nginx` pod in the new namespace
-* Find the IP address of the new pod
-* Start an interactive throwaway pod in the same namespace:
-  `kubectl run tmp -it -n lab01-exercise --rm --image ubuntu -- bash`
-* From inside it, try to `curl` the nginx pod's IP
-* If it fails, work out why and fix it (what does a bare `ubuntu` image not ship with?)
-* Exit the pod (`exit`)
-* Start the ubuntu pod again. What do you see, and what does that tell you about a pod's filesystem?
-* Now run the throwaway pod in a **different** namespace (for example `default`) and `curl` the same nginx pod IP over in `lab01-exercise`. Does it still work? What does that tell you about whether a namespace is a network boundary by default?
+## Reach the NodePort
+Grab a node IP:
+```
+export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].address}")
+```
+> On EKS/AKS/GKE, use the external public IP of a node and open the node port in the security group / firewall.
+> On a KIND cluster the nodes are containers on the `kind` docker network, so run a client on that network: `docker run -it --network kind xxradar/hackon`, then issue the curl commands from there.
+```
+curl http://127.0.0.1:31062
+...
+curl http://$NODE:31062
+```
+Compare the endpoints of the two services (they select the same pods, so the Endpoints list is identical):
+```
+kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
+...
+kubectl get ep my-nginx-nodeport -n prod-nginx -o yaml
+...
+```
 
-> Takeaway for network engineers: pod IPs are ephemeral and a pod's filesystem resets on restart, so **Services** (next labs) give you a stable virtual IP in front of changing pods. And a namespace isolates names, not traffic, cross-namespace pod-to-pod reachability is open by default until you add a **NetworkPolicy** (LAB20 and LAB21).
+### Explore it yourself
+* Does the node port answer on a node that is **not** running an nginx pod? Try a different node IP. What does that tell you about how the traffic gets forwarded?
+* Which of the two services is reachable from **outside** the cluster, and which only from inside?
+* What port range did the node port come from, and how would you pin a specific one?
+
+> Takeaway for network engineers: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB15) sits on top of.
