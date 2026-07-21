@@ -1,4 +1,4 @@
-## LAB18 - Ingress <br>
+## LAB 6 - Ingress <br>
 ### KIND - Nginx ingress - K8S v1.18
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/baremetal/deploy.yaml

@@ -1,4 +1,4 @@
-## LAB18 - Ingress <br>
+## LAB 6 - Ingress <br>
 ### Install NGIX Ingress controller
 ```
 wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml

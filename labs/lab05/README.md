@@ -1,10 +1,10 @@
-# LAB15 - Services - LoadBalancer
+# LAB05 - Services - LoadBalancer
 
 A **LoadBalancer** Service asks the underlying platform to provision an **external IP** that routes into the service. It is a superset of the previous types: it still gets a cluster-internal VIP (ClusterIP) and a node port (NodePort), and adds a real external address on top.
 
 For network engineers: on a managed cloud (EKS, AKS, GKE) this provisions a cloud load balancer and the `EXTERNAL-IP` fills in automatically. On a self-managed or KIND cluster there is no external load balancer by default, so the `EXTERNAL-IP` stays `<Pending>` until you add something like [MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/) to hand out addresses.
 
-> Continues from LAB14: the `prod-nginx` namespace and the nginx deployment already exist.
+> Continues from LAB04: the `prod-nginx` namespace and the nginx deployment already exist.
 
 ## Setting up MetalLB (KIND only)
 On a managed cloud cluster you can skip this section. On KIND you need MetalLB so a LoadBalancer service gets an external IP. Check the Docker IPAM range carefully and match the MetalLB pool to it.

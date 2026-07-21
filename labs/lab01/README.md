@@ -1,6 +1,6 @@
-# LAB04 - Learning about pods
+# LAB01 - Learning about pods
 
-A **pod** is the smallest deployable unit in Kubernetes, one or more containers that share a single network namespace. In network terms: every pod gets its **own IP address** (from the pod CIDR you configured in LAB01), and containers inside a pod reach each other over `localhost`. Pod-to-pod traffic is routed flat, with **no NAT** between pods.
+A **pod** is the smallest deployable unit in Kubernetes, one or more containers that share a single network namespace. In network terms: every pod gets its **own IP address** (from the pod CIDR you configured in LAB00), and containers inside a pod reach each other over `localhost`. Pod-to-pod traffic is routed flat, with **no NAT** between pods.
 
 A **namespace** is a logical boundary for grouping and isolating resources, think of it like a tenant or VRF for your objects (it scopes names and, later, network policy).
 
@@ -67,4 +67,4 @@ Work through these yourself, the interesting part is figuring out the "why".
 * Start the ubuntu pod again. What do you see, and what does that tell you about a pod's filesystem?
 * Now run the throwaway pod in a **different** namespace (for example `default`) and `curl` the same nginx pod IP over in `lab01-exercise`. Does it still work? What does that tell you about whether a namespace is a network boundary by default?
 
-> Takeaway for network engineers: pod IPs are ephemeral and a pod's filesystem resets on restart, so **Services** (next labs) give you a stable virtual IP in front of changing pods. And a namespace isolates names, not traffic, cross-namespace pod-to-pod reachability is open by default until you add a **NetworkPolicy** (LAB20 and LAB21).
+> Takeaway for network engineers: pod IPs are ephemeral and a pod's filesystem resets on restart, so **Services** (next labs) give you a stable virtual IP in front of changing pods. And a namespace isolates names, not traffic, cross-namespace pod-to-pod reachability is open by default until you add a **NetworkPolicy** (labs 07 and 08).

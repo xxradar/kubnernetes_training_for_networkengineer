@@ -1,4 +1,4 @@
-# LAB01 - AKS Cluster with Terraform (default Azure CNI)
+# LAB00 - AKS Cluster with Terraform (default Azure CNI)
 
 This lab creates a managed [AKS](https://azure.microsoft.com/products/kubernetes-service) cluster with [Terraform](https://developer.hashicorp.com/terraform), using the default Azure CNI networking. It provisions the same size cluster as the EKS and GKE labs.
 

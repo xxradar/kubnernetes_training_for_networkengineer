@@ -1,10 +1,10 @@
-# LAB14 - Services - NodePort
+# LAB04 - Services - NodePort
 
 A **NodePort** Service exposes your app on a static port on **every node** in the cluster. Traffic to `<any-node-IP>:<nodePort>` is picked up by the dataplane (kube-proxy, or Cilium eBPF) and load-balanced to the pods behind the service. A NodePort is a superset of a ClusterIP: it still gets a cluster-internal VIP, and adds the node-level port on top.
 
 For network engineers: the port (default range `30000-32767`) is open on **all** nodes, even the ones not running a matching pod, because the node forwards the traffic internally. That makes it a simple way to reach an app from outside the cluster without a cloud load balancer, at the cost of exposing raw node IPs and high ports.
 
-> Continues from LAB13: the nginx deployment and the `my-nginx-clusterip` service already exist.
+> Continues from LAB03: the nginx deployment and the `my-nginx-clusterip` service already exist.
 
 ## Create a service of type NodePort
 ```
@@ -57,4 +57,4 @@ kubectl get ep my-nginx-nodeport -n prod-nginx -o yaml
 * Which of the two services is reachable from **outside** the cluster, and which only from inside?
 * What port range did the node port come from, and how would you pin a specific one?
 
-> Takeaway for network engineers: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB15) sits on top of.
+> Takeaway for network engineers: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB05) sits on top of.

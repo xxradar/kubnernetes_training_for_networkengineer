@@ -1,4 +1,4 @@
-## LAB18 - Ingress <br>
+## LAB 6 - Ingress <br>
 ### Rancher Desktop
 If you're using `Rancher Desktop`, ingress is implemented via Traefik.<br>
 Verify the service node ports.
