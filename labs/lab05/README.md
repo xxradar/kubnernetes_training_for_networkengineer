@@ -40,7 +40,9 @@ metadata:
   namespace: metallb-system
 EOF
 ```
-You can reach the LoadBalancer IP from your lab host. To make it reachable from the outside world on a KIND cluster, add NAT rules on the host:
+You can already reach the LoadBalancer IP from the lab host itself, the host has a route to the Docker `kind` bridge, so no extra rules are needed for testing.
+
+> **Optional, external access only.** The NAT rules below are only needed to reach the MetalLB LoadBalancer IP from **outside** the host (for example your laptop hitting the instance's public IP). You do not need them when you curl from the host, and they do not apply on managed clouds (EKS/AKS/GKE), where a real cloud load balancer is provisioned instead.
 ```
 sudo iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 80 -j DNAT --to-destination 172.18.255.200:80
 sudo iptables -A FORWARD -p tcp -d 172.18.255.200 --dport 80 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
