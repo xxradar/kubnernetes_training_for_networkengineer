@@ -100,6 +100,46 @@ Watch it happen live: run this in one terminal, then scale up or down in another
 kubectl get po -n prod-nginx -o wide -w
 ```
 
+## Host network vs pod network (a first DaemonSet)
+Normally a pod gets its **own IP** from the pod CIDR and its own network namespace, which is what you have seen so far. A pod with `hostNetwork: true` instead **shares the node's network namespace**: it has no separate pod IP, it uses the **node's IP**, and any `containerPort` binds directly on the node's interface.
+
+For network engineers: a host-network pod bypasses the CNI and the overlay entirely, so there is no pod IP and no NAT, the process just listens on the node. This is how node-level agents (the CNI agent, kube-proxy, log and metrics collectors) run, and they are almost always deployed as a **DaemonSet**, which runs exactly one pod per node.
+
+Deploy nginx as a host-network DaemonSet:
+```
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-hostnet
+  namespace: prod-nginx
+  labels:
+    app: nginx-hostnet
+spec:
+  selector:
+    matchLabels:
+      app: nginx-hostnet
+  template:
+    metadata:
+      labels:
+        app: nginx-hostnet
+    spec:
+      hostNetwork: true
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+EOF
+```
+Now compare the addressing with the Deployment's pods:
+```
+kubectl get po -n prod-nginx -o wide -l app=nginx-hostnet
+```
+Two things stand out. There is **one pod per worker node** (that is the DaemonSet), and each pod's IP is the **node's IP**, not a `10.10.x` pod-CIDR address. The nginx process is now listening on port 80 of the node itself.
+
+> One gotcha: because it binds the node's port 80 directly, only one host-network pod can use that port per node. If something else already holds port 80 on the node, the pod fails to start. That direct binding, with no pod IP and no NAT, is exactly the point of hostNetwork.
+
 ### Exercise
 Work through these and reason about the "why".
 

@@ -78,13 +78,17 @@ A LoadBalancer service is reachable at all three levels. Grab a node IP first:
 ```
 export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].address}")
 ```
+Via the node port on localhost:
 ```
-curl http://127.0.0.1:31062       # via the node port on localhost
-...
-curl http://$NODE:31062           # via the node port on a node IP
-...
-curl http://<external-ip>:80      # via the external LoadBalancer IP
-...
+curl http://127.0.0.1:31062
+```
+Via the node port on a node IP:
+```
+curl http://$NODE:31062
+```
+Via the external LoadBalancer IP:
+```
+curl http://<external-ip>:80
 ```
 
 ### Explore it yourself
