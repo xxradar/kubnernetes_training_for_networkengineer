@@ -146,16 +146,35 @@ spec:
     app: nginx
 EOF
 ```
-From a pod in `myhackns`, work out why each of these does or does not work (mind the namespace and the port)
+You now have two services called `my-nginx-clusterip`: one in `prod-nginx` on port `80`, and one in `dev-nginx` on port `8765`. Start a test pod in a third namespace, `myhackns`:
 ```
 kubectl run -it --rm -n myhackns --image xxradar/hackon hackpod -- bash
-curl <a_prod-nginx_pod_ip>              # Does this work?
-curl <a_svc_ip>                         # Does this work?
-curl my-nginx-clusterip                 # Does this work?
-curl my-nginx-clusterip:8765            # Does this work?
-curl my-nginx-clusterip.prod-nginx      # Does this work?
-curl my-nginx-clusterip.dev-nginx       # Does this work?
-curl my-nginx-clusterip.dev-nginx:8765  # Does this work?
+```
+Work through the checks below from inside that pod and reason about each result. Two things decide the outcome: which namespace a name resolves in, and which port the service listens on.
+
+### By IP
+An IP is reachable cluster-wide, regardless of namespace. Straight to a prod-nginx pod IP:
+```
+curl <a_prod-nginx_pod_ip>          # Does this work?
+```
+Straight to a service ClusterIP:
+```
+curl <a_svc_ip>                     # Does this work?
+```
+
+### By short name (namespace matters)
+A short name resolves in the pod's own namespace (`myhackns`), where no such service exists:
+```
+curl my-nginx-clusterip             # Does this work?
+curl my-nginx-clusterip:8765        # Does this work?
+```
+
+### By name.namespace (namespace and port matter)
+Now target the services explicitly. Remember the prod service listens on `80` and the dev service on `8765`:
+```
+curl my-nginx-clusterip.prod-nginx        # Does this work?
+curl my-nginx-clusterip.dev-nginx         # Does this work?
+curl my-nginx-clusterip.dev-nginx:8765    # Does this work?
 ```
 
 > Takeaway: a ClusterIP is a stable in-cluster VIP that load-balances by label selector to the current Endpoints, and you reach it by DNS name, not by IP. Remember the two gotchas: the short name only resolves inside its own namespace (use `name.namespace` across namespaces), and the service `port` can differ from the container `targetPort`.
