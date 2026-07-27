@@ -4,21 +4,24 @@ A **pod** is the smallest deployable unit in Kubernetes, one or more containers 
 
 A **namespace** is a logical boundary for grouping and isolating resources, think of it like a tenant or VRF for your objects (it scopes names and, later, network policy).
 
+## Namespaces
 First, list the namespaces that already exist on the cluster:
 ```
 kubectl get ns
 ```
 You will see the built-in ones such as `default`, `kube-system`, and `kube-public`.
 
-Create a namespace
+Create a namespace for this lab:
 ```
 kubectl create ns prod-nginx
 ```
-Deploy a a single pod in the newly create namespace
+
+## Deploy a pod
+Deploy a single pod into the new namespace, either from a file:
 ```
 kubectl apply -f pod.yaml
 ```
-or 
+or inline with a heredoc:
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -37,22 +40,46 @@ spec:
     - containerPort: 80
 EOF
 ```
-Analyse the output of kubectl with the different flags
+
+## Listing pods
+`kubectl get po` lists pods, and the flags change which namespace and how much detail you see.
+
+Pods in the `default` namespace:
 ```
-kubectl get po                #show pods in default namespace
-kubectl get po -n prod-nginx  #show pods in namespace prod-nginx
-kubectl get po -A             #show all pods in all namespaces
+kubectl get po
 ```
+Nothing shows here, because you created the pod in `prod-nginx`, not `default`.
+
+Pods in a specific namespace:
 ```
-kubectl get po -n prod-nginx -o wide    #show additional information like POD IP address and NODE information
-NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES
-nginx-pod                           1/1     Running   0          136m   10.10.162.130   kind-worker    <none>           <none>
+kubectl get po -n prod-nginx
 ```
+This is where your `nginx-pod` lives.
+
+Pods in every namespace:
 ```
-kubectl get po -n prod-nginx -o wide --show-labels   #show pod label information
-NAME                                READY   STATUS    RESTARTS   AGE    IP              NODE           NOMINATED NODE   READINESS GATES   LABELS
-nginx-pod                           1/1     Running   0          138m   10.10.162.130   kind-worker    <none>           <none>            environment=prod,name=nginx
+kubectl get po -A
 ```
+This also lists the control plane pods in `kube-system`.
+
+## Pod details with -o wide
+Add `-o wide` to see the pod's IP address and the node it is scheduled on:
+```
+kubectl get po -n prod-nginx -o wide
+NAME        READY   STATUS    RESTARTS   AGE    IP              NODE          NOMINATED NODE   READINESS GATES
+nginx-pod   1/1     Running   0          136m   10.10.162.130   kind-worker   <none>           <none>
+```
+For a network engineer the two interesting columns are `IP` (the pod's own address, from the pod CIDR) and `NODE` (which node it landed on).
+
+## Pod labels with --show-labels
+Add `--show-labels` to see the labels attached to the pod:
+```
+kubectl get po -n prod-nginx -o wide --show-labels
+NAME        READY   STATUS    RESTARTS   AGE    IP              NODE          NOMINATED NODE   READINESS GATES   LABELS
+nginx-pod   1/1     Running   0          138m   10.10.162.130   kind-worker   <none>           <none>            environment=prod,name=nginx
+```
+Labels look cosmetic now, but they are how Services and network policies will target this pod later.
+
 ### Exercise
 Work through these yourself, the interesting part is figuring out the "why".
 
