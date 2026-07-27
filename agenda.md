@@ -6,10 +6,11 @@
 - Networking and CNI (Calico / Cilium)
 - CoreDNS / service discovery
 - Running a first pod
-+ labs
+- Pods, ReplicaSets, Deployments
++ labs 000, 010, 020
 
 ## Session 2 - Workloads & Security Context
-- Pods, ReplicaSets, Deployments
+
 - DaemonSets / StatefulSets
 - Namespaces
 - Health probes (liveness / readiness)
@@ -25,7 +26,7 @@
 - Ingress
 - Gateway API
 - Network policies (default-deny)
-+ labs
++ labs 030, 040, 050
 
 ## Session 4 - Operations
 - Secrets and ConfigMaps
