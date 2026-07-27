@@ -39,17 +39,21 @@ export NODE=$(kubectl get no kind-worker2 -o=jsonpath="{.status.addresses[0].add
 ```
 > On EKS/AKS/GKE, use the external public IP of a node and open the node port in the security group / firewall.
 > On a KIND cluster the nodes are containers on the `kind` docker network, so run a client on that network: `docker run -it --network kind xxradar/hackon`, then issue the curl commands from there.
+From localhost on the node itself:
 ```
 curl http://127.0.0.1:31062
-...
+```
+From a node's IP:
+```
 curl http://$NODE:31062
 ```
-Compare the endpoints of the two services (they select the same pods, so the Endpoints list is identical):
+Compare the endpoints of the two services. They select the same pods, so the Endpoints list is identical. The ClusterIP service:
 ```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
-...
+```
+The NodePort service:
+```
 kubectl get ep my-nginx-nodeport -n prod-nginx -o yaml
-...
 ```
 
 ### Explore it yourself
@@ -57,4 +61,4 @@ kubectl get ep my-nginx-nodeport -n prod-nginx -o yaml
 * Which of the two services is reachable from **outside** the cluster, and which only from inside?
 * What port range did the node port come from, and how would you pin a specific one?
 
-> Takeaway for network engineers: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB05) sits on top of.
+> Takeaway: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB05) sits on top of.

@@ -6,7 +6,7 @@ For network engineers: the ClusterIP is not bound to any interface, it is a virt
 
 > Continues from LAB02: the `prod-nginx` namespace and the nginx deployment already exist.
 
-Create a service of type ClusterIP
+## Create a ClusterIP service
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -22,10 +22,17 @@ spec:
     app: nginx
 EOF
 ```
-Inspect the service, its details, and its endpoints
+## Inspect the service
+See the service and its ClusterIP:
 ```
 kubectl get svc -n prod-nginx -o wide
+```
+Look at the details, including the selector and the port mapping:
+```
 kubectl describe svc -n prod-nginx my-nginx-clusterip
+```
+List the Endpoints, the live set of pod IPs behind the service:
+```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
 ```
 Compare the Endpoints list with the pod IPs from LAB02. They should be the same set, and the service picks pods purely by the `selector` labels.
@@ -43,26 +50,34 @@ kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
 * How many IPs are in the Endpoints after each scale? Does the ClusterIP address itself change?
 * Scale down to `--replicas=0`. What does the Endpoints list look like now, and what happens if you `curl` the service?
 
-## Exercise
-Create a test pod (this image ships with networking tools)
+## Exercise: reach the service by DNS
+Create a test pod (this image ships with networking tools):
 ```
 kubectl run -it --rm -n prod-nginx --image xxradar/hackon hackpod -- bash
 ```
-From inside the pod, look at its own network and DNS config
+From inside the pod, look at its own network config:
 ```
 ifconfig
-...
+```
+and its DNS config (note the `search` domains and the CoreDNS server):
+```
 cat /etc/resolv.conf
-...
 ```
-Now reach the app three different ways and reason about each
+Now reach the app three different ways and reason about each. Straight to a pod IP:
 ```
-curl <a_prod-nginx_pod_ip>          # straight to a pod IP
-curl my-nginx-clusterip             # short DNS name, same namespace
-curl my-nginx-clusterip.prod-nginx  # name.namespace
+curl <a_prod-nginx_pod_ip>
+```
+By short DNS name, in the same namespace:
+```
+curl my-nginx-clusterip
+```
+By name.namespace:
+```
+curl my-nginx-clusterip.prod-nginx
 ```
 Which of these would keep working after the pods are recreated with new IPs?
 
+### From another namespace
 Now repeat from a pod in **another** namespace
 ```
 kubectl create ns myhackns
@@ -78,7 +93,7 @@ curl my-nginx-clusterip.prod-nginx  # Does this work?
 ```
 The short name only resolves in the pod's own namespace, so from `myhackns` you need `name.namespace`.
 
-## Additional exercise
+## Additional exercise: service port vs targetPort
 Create a second app and service in a `dev-nginx` namespace, using a different service `port` (8765) that maps to the container's `targetPort` (80).
 ```
 kubectl apply -f - <<EOF
@@ -143,4 +158,4 @@ curl my-nginx-clusterip.dev-nginx       # Does this work?
 curl my-nginx-clusterip.dev-nginx:8765  # Does this work?
 ```
 
-> Takeaway for network engineers: a ClusterIP is a stable in-cluster VIP that load-balances by label selector to the current Endpoints, and you reach it by DNS name, not by IP. Remember the two gotchas: the short name only resolves inside its own namespace (use `name.namespace` across namespaces), and the service `port` can differ from the container `targetPort`.
+> Takeaway: a ClusterIP is a stable in-cluster VIP that load-balances by label selector to the current Endpoints, and you reach it by DNS name, not by IP. Remember the two gotchas: the short name only resolves inside its own namespace (use `name.namespace` across namespaces), and the service `port` can differ from the container `targetPort`.

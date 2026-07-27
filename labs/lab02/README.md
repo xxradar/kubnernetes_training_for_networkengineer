@@ -6,7 +6,7 @@ Two things matter for networking. Every replacement pod gets a **new IP**, and p
 
 > LAB02 to LAB05 run in sequence in the `prod-nginx` namespace, created in LAB01. Each lab builds on the previous one.
 
-Create a deployment
+## Create a deployment
 ```
 kubectl apply -f - <<EOF
 apiVersion: apps/v1
@@ -34,12 +34,25 @@ spec:
         - containerPort: 80
 EOF
 ```
-Inspect the deployment, its pods, and the ReplicaSet it created
+## Inspect the deployment
+See the deployment itself:
 ```
 kubectl get deploy -n prod-nginx -o wide
+```
+See the pods it created:
+```
 kubectl get po -n prod-nginx -o wide
+```
+Look at the deployment in detail, its update strategy, replica counts, and the ReplicaSet it points at:
+```
 kubectl describe deploy -n prod-nginx nginx-deployment
+```
+List the ReplicaSet the deployment created:
+```
 kubectl get rs -n prod-nginx
+```
+Inspect that ReplicaSet (use the name from the previous command):
+```
 kubectl describe rs -n prod-nginx <your_rs>
 ```
 Look at the pod names: `nginx-deployment-<replicaset-hash>-<random>`. The `pod-template-hash` label is what ties each pod to its ReplicaSet, and the `describe deploy` output points at the `NewReplicaSet` that owns them.
@@ -51,12 +64,21 @@ Look at the pod names: `nginx-deployment-<replicaset-hash>-<random>`. The `pod-t
 * A Service (LAB03) picks its backend pods the same way, with a label selector.
 * The `pod-template-hash` label is added automatically by the Deployment, so pods from different rollout revisions can be told apart.
 
-Look at, and filter by, labels from the CLI:
+Filter pods by label from the CLI. Show every label on each pod:
 ```
-kubectl get po -n prod-nginx --show-labels               # show every label on each pod
-kubectl get po -n prod-nginx -l app=nginx                # only pods matching this label
-kubectl get po -n prod-nginx -l env=prod,app=nginx       # AND of both labels
-kubectl get po -n prod-nginx -L app -L env               # show these label values as columns
+kubectl get po -n prod-nginx --show-labels
+```
+Only the pods matching one label:
+```
+kubectl get po -n prod-nginx -l app=nginx
+```
+The AND of two labels:
+```
+kubectl get po -n prod-nginx -l env=prod,app=nginx
+```
+Show label values as their own columns:
+```
+kubectl get po -n prod-nginx -L app -L env
 ```
 This is exactly the matching the ReplicaSet does to decide which pods it owns, and what a Service does to decide where to send traffic.
 
@@ -64,6 +86,9 @@ This is exactly the matching the ReplicaSet does to decide which pods it owns, a
 Scaling just changes the **desired** replica count, and the ReplicaSet reconciles by adding or removing pods until actual matches desired. Scale imperatively:
 ```
 kubectl scale -n prod-nginx --replicas=5 deploy/nginx-deployment
+```
+Then look at the pods:
+```
 kubectl get po -n prod-nginx -o wide
 ```
 Or declaratively by changing `spec.replicas` in the manifest and re-applying it.
@@ -88,4 +113,4 @@ Work through these and reason about the "why".
   `kubectl scale -n prod-nginx --replicas=6 deploy/nginx-deployment`
   `kubectl get po -n prod-nginx -o wide`
 
-> Takeaway for network engineers: the ReplicaSet continuously reconciles to the desired replica count, so pods and their IPs come and go. You manage the set through labels, not through individual pods. That moving target is what a Service sits in front of, next in LAB03.
+> Takeaway: the ReplicaSet continuously reconciles to the desired replica count, so pods and their IPs come and go. You manage the set through labels, not through individual pods. That moving target is what a Service sits in front of, next in LAB03.
