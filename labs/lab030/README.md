@@ -44,8 +44,9 @@ Scaling the deployment changes how many pods sit behind the service. The Cluster
 Scale the deployment to 5 replicas:
 ```
 kubectl scale -n prod-nginx --replicas=5 deploy/nginx-deployment
+kubectl rollout status -n prod-nginx deploy/nginx-deployment
 ```
-Look at the Endpoints, you should now see 5 pod IPs:
+Once the rollout is ready, look at the Endpoints. You should now see the backend set grow to 5 pod IPs:
 ```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
 ```
@@ -54,8 +55,9 @@ kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
 Scale back to 2 replicas:
 ```
 kubectl scale -n prod-nginx --replicas=2 deploy/nginx-deployment
+kubectl rollout status -n prod-nginx deploy/nginx-deployment
 ```
-Check the Endpoints again, the list shrinks to 2:
+After the rollout is ready, check the Endpoints again. The list should shrink to 2:
 ```
 kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
 ```
