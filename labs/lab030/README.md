@@ -38,17 +38,31 @@ kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
 Compare the Endpoints list with the pod IPs from LAB020. They should be the same set, and the service picks pods purely by the `selector` labels.
 
 ## Quick exercise: scaling and the service
-Scale the deployment and watch the service track it. The ClusterIP (the VIP) never changes, but the Endpoints list grows and shrinks with the pods.
+Scaling the deployment changes how many pods sit behind the service. The ClusterIP (the VIP) stays the same, but the Endpoints list tracks the pods as they come and go. Watch both while you scale.
+
+### Scale up
+Scale the deployment to 5 replicas:
 ```
 kubectl scale -n prod-nginx --replicas=5 deploy/nginx-deployment
-kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
-...
-kubectl scale -n prod-nginx --replicas=2 deploy/nginx-deployment
-kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
-...
 ```
-* How many IPs are in the Endpoints after each scale? Does the ClusterIP address itself change?
-* Scale down to `--replicas=0`. What does the Endpoints list look like now, and what happens if you `curl` the service?
+Look at the Endpoints, you should now see 5 pod IPs:
+```
+kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
+```
+
+### Scale down
+Scale back to 2 replicas:
+```
+kubectl scale -n prod-nginx --replicas=2 deploy/nginx-deployment
+```
+Check the Endpoints again, the list shrinks to 2:
+```
+kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
+```
+
+### Reason about it
+* How many IPs are in the Endpoints after each scale, and does the ClusterIP address itself change?
+* Scale down to `--replicas=0`. What does the Endpoints list look like now, and what happens when you `curl` the service?
 
 ## Exercise: reach the service by DNS
 Create a test pod (this image ships with networking tools):
