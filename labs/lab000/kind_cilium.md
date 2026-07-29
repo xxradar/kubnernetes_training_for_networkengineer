@@ -70,7 +70,10 @@ Wait for Cilium to be ready:
 
 ```bash
 cilium status --wait
-cilium connectivity test   # optional, takes several minutes
+```
+Optional, takes several minutes.
+```bash
+cilium connectivity test
 ```
 
 ```bash
