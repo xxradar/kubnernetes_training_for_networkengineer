@@ -69,7 +69,8 @@ sudo apt-get install -y \
     curl \
     gnupg-agent \
     software-properties-common \
-    net-tools
+    net-tools \
+    jq
 ```
 
 ---
