@@ -75,7 +75,7 @@ Optional, takes several minutes.
 ```bash
 cilium connectivity test
 ```
-
+Check if the nodes are READY
 ```bash
 kubectl get no
 ```
