@@ -90,9 +90,20 @@ kubectl -n kube-system exec ds/cilium -c cilium-agent -- cilium status | grep -i
 
 ## 4. Hubble observability
 
+Open a port-forward to the Hubble relay (it listens on `4245`), in the background:
 ```bash
 cilium hubble port-forward&
+```
+
+> If you get `unable to listen on any of the requested ports: [{4245 4245}]`, a port-forward is already running from an earlier run. You do not need a second one, just carry on with `hubble status`. To restart it cleanly instead, run `pkill -f "hubble port-forward"` first, then start it again.
+
+Check the relay is reachable:
+```bash
 hubble status
+```
+
+Watch live flows:
+```bash
 hubble observe
 ```
 
