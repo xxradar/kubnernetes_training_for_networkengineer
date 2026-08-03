@@ -1,44 +1,53 @@
 # Kubernetes for Network & Security Engineers
 
-## Section 1 - Foundations
+## Session 1 - Foundations
 - Intro to k8s + control plane (api-server, etcd, scheduler, controller-manager, kubelet/CRI)
 - Setting up a cluster (kind)
 - Networking and CNI (Calico / Cilium)
 - CoreDNS / service discovery
 - Running a first pod
+- Namespaces
 - Pods, ReplicaSets, Deployments
+- Labels and selectors
+- Replicas and scaling
+- DaemonSets and hostNetwork
+- StatefulSets
 + labs 000, 010, 020
 
-## Section 2 - Workloads & Security Context
-
-- DaemonSets / StatefulSets
-- Namespaces
-- Health probes (liveness / readiness)
-- securityContext hardening (runAsNonRoot, readOnlyRootFS, drop caps, seccomp)
-- Resource requests / limits (as a security control)
-- Replicas and scaling
-- Intro storage
-+ labs
-
-## Section 3 - Services & Networking
-- Services (ClusterIP, NodePort, LoadBalancer) + Endpoints / EndpointSlices
+## Session 2 - Services & Networking
 - kube-proxy dataplane (iptables / IPVS / eBPF, Cilium kube-proxy replacement)
+- Services (ClusterIP) + Endpoints / EndpointSlices
+- Health probes (readiness / liveness / startup)
+- Accessing services (port-forward, kubectl proxy)
+- Services (NodePort)
+- Services (LoadBalancer, MetalLB)
++ labs 030, 032, 035, 040, 050
+
+## Session 3
+- Secrets and ConfigMaps
 - Ingress
 - Gateway API
+
+
+## Session 3
+- Intro storage
+- Resource requests / limits (as a security control)
+- securityContext hardening (runAsNonRoot, readOnlyRootFS, drop caps, seccomp)
 - Network policies (default-deny)
-+ labs 030, 040, 050
 
-## Section 4 - Operations
-- Secrets and ConfigMaps
-- RBAC + ServiceAccounts
-- Introduction to Helm
-- Observability & metrics (metrics-server, Prometheus model, logs, Hubble)
-+ labs
 
-## Section 5 - Security Posture
+## Session 5
 - Pod Security Standards
 - Admission control (Kyverno / Gatekeeper)
 - Image security (scanning: Trivy / signing: cosign, verified at admission)
 - Audit logs
 - Events
-+ labs
+- Observability & metrics (metrics-server, Prometheus model, logs, Hubble)
+- RBAC + ServiceAccounts
+- Introduction to Helm
+
+
+
+
+
+
