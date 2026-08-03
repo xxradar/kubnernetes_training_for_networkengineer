@@ -27,13 +27,14 @@
 - Secrets and ConfigMaps
 - Ingress
 - Gateway API
-
++ labs 060, 065
 
 ## Session 4
 - Intro storage
 - Resource requests / limits (as a security control)
 - securityContext hardening (runAsNonRoot, readOnlyRootFS, drop caps, seccomp)
 - Network policies (default-deny)
+- labs 070
 
 
 ## Session 5
