@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: prod-nginx
+  labels:
+    app: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+        env: prod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        command: ["/bin/sh","-c","echo ok > /usr/share/nginx/html/healthz; touch /tmp/alive; exec nginx -g 'daemon off;'"]
+        ports:
+        - containerPort: 80
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 2
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          periodSeconds: 3
+        livenessProbe:
+          exec:
+            command: ["cat", "/tmp/alive"]
+          periodSeconds: 5

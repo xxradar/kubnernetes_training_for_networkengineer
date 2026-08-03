@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-hostnet
+  namespace: prod-nginx
+  labels:
+    app: nginx-hostnet
+spec:
+  selector:
+    matchLabels:
+      app: nginx-hostnet
+  template:
+    metadata:
+      labels:
+        app: nginx-hostnet
+    spec:
+      hostNetwork: true
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
