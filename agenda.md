@@ -34,7 +34,7 @@
 - Resource requests / limits (as a security control)
 - securityContext hardening (runAsNonRoot, readOnlyRootFS, drop caps, seccomp)
 - Network policies (default-deny)
-- labs 070
+- labs 070 080
 
 
 ## Session 5
@@ -46,6 +46,7 @@
 - Observability & metrics (metrics-server, Prometheus model, logs, Hubble)
 - RBAC + ServiceAccounts
 - Introduction to Helm
+- lab 090 100 110
 
 
 
