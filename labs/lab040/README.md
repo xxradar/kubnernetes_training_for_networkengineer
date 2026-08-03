@@ -49,11 +49,11 @@ curl http://$NODE:31062
 ```
 Compare the endpoints of the two services. They select the same pods, so the Endpoints list is identical. The ClusterIP service:
 ```
-kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
+kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-clusterip -o yaml
 ```
 The NodePort service:
 ```
-kubectl get ep my-nginx-nodeport -n prod-nginx -o yaml
+kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-nodeport -o yaml
 ```
 
 ### Explore it yourself

@@ -93,7 +93,7 @@ curl http://<external-ip>:80
 
 ### Explore it yourself
 * On KIND, what does `EXTERNAL-IP` show before you install MetalLB, and after?
-* The LoadBalancer, NodePort, and ClusterIP for this app all forward to the same pods. Confirm with `kubectl get ep my-nginx-lb -n prod-nginx -o yaml`.
+* The LoadBalancer, NodePort, and ClusterIP for this app all forward to the same pods. Confirm with `kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-lb -o yaml`.
 * On a managed cloud, where does the external IP come from, and what actually sits in the traffic path compared to the KIND/MetalLB case?
 
 > Takeaway: the three service types stack. ClusterIP gives an internal VIP, NodePort adds a port on every node, and LoadBalancer adds an external address on top. Which you use is about where you need to reach the app from, not about how it selects pods (that is always the label selector).

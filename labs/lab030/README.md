@@ -33,7 +33,7 @@ kubectl describe svc -n prod-nginx my-nginx-clusterip
 ```
 List the Endpoints, the live set of pod IPs behind the service:
 ```
-kubectl get ep my-nginx-clusterip -n prod-nginx -o yaml
+kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-clusterip -o yaml
 ```
 Compare the Endpoints list with the pod IPs from LAB020. They should be the same set, and the service picks pods purely by the `selector` labels.
 
@@ -48,7 +48,7 @@ kubectl rollout status -n prod-nginx deploy/nginx-deployment
 ```
 Once the rollout is ready, look at the Endpoints. You should now see the backend set grow to 5 pod IPs:
 ```
-kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
+kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-clusterip
 ```
 
 ### Scale down
@@ -59,7 +59,7 @@ kubectl rollout status -n prod-nginx deploy/nginx-deployment
 ```
 After the rollout is ready, check the Endpoints again. The list should shrink to 2:
 ```
-kubectl get ep my-nginx-clusterip -n prod-nginx -o wide
+kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-clusterip
 ```
 
 ### Reason about it
