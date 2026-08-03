@@ -29,7 +29,7 @@
 - Gateway API
 
 
-## Session 3
+## Session 4
 - Intro storage
 - Resource requests / limits (as a security control)
 - securityContext hardening (runAsNonRoot, readOnlyRootFS, drop caps, seccomp)
