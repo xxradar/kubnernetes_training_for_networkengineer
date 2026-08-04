@@ -71,6 +71,8 @@ Without it the scheduler is free to pile all replicas onto one node. `topologySp
 Why it matters for this lab: an **even spread is a prerequisite for topology-aware routing**. The topology-aware-hints algorithm only keeps traffic in-zone when each zone has a share of endpoints **proportional to its capacity**; if one zone has far fewer endpoints, it deliberately sends cross-zone traffic rather than overload the small zone. So "spread the pods" and "route locally" go together.
 
 ## Pinning pods with node affinity
+> **Scheduler, not dataplane.** Everything about pod **placement** here, `topologySpreadConstraints`, `nodeSelector`, node affinity, pod affinity/anti-affinity, and DaemonSets, is decided by the kube-scheduler and behaves the **same on any CNI** (Cilium, Calico, kube-proxy). Only the **traffic-routing** parts further down (`internalTrafficPolicy` and topology-aware routing) have dataplane-specific behavior.
+
 `topologySpreadConstraints` spreads pods out. Sometimes you instead want to **pin** pods to specific nodes (a zone, GPU nodes, an ingress tier). Two ways:
 
 `nodeSelector` is the simple exact-match form:
