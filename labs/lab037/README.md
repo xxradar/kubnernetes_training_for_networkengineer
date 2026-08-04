@@ -1,14 +1,13 @@
-# LAB037 - Traffic locality (internalTrafficPolicy and topology-aware routing)
+# LAB037 - Traffic locality (spreading, affinity, internalTrafficPolicy, topology-aware routing)
 
 > **Optional, standalone lab.** It uses its own namespace `topo-demo` and does not depend on the other labs. It needs a cluster with at least **two worker nodes**.
 
-By default a ClusterIP load-balances east-west (in-cluster) traffic across **all** ready endpoints, wherever they run. You can bias that toward locality (lower latency, and on a cloud lower cross-zone egress cost) in two ways, but they behave very differently depending on the **dataplane**:
+By default a ClusterIP load-balances east-west (in-cluster) traffic across **all** ready endpoints, wherever they run. This lab is about controlling **where the pods run** and **which endpoints receive traffic**, to keep traffic node-local or zone-local (lower latency, and on a cloud, lower cross-zone egress cost).
 
-- `internalTrafficPolicy: Local` - only send to endpoints on the **same node** as the client. Honored by **every** dataplane (kube-proxy and Cilium).
-- `spec.trafficDistribution` (`PreferSameZone` / `PreferSameNode`) - topology-aware routing. Honored by **kube-proxy**, but **not enforced by Cilium's kube-proxy replacement** in current versions (our course clusters). Treat this part as a lesson in "the Service API expresses intent, but the dataplane has to implement it."
+A recurring theme: some of these knobs are plain Kubernetes API and work everywhere; the **topology-aware** ones depend on the **dataplane** (kube-proxy vs Cilium), and they behave differently.
 
 ## Setup
-Create the namespace and an app that reveals which pod answered (`traefik/whoami` returns its own hostname), spread across the nodes:
+Create the namespace and an app that reveals which pod answered (`traefik/whoami` returns its own hostname):
 ```
 kubectl create ns topo-demo
 kubectl apply -f - <<EOF
@@ -56,11 +55,59 @@ spec:
     targetPort: 80
 EOF
 ```
-See where the pods landed (note the `NODE` column, they should be split across your workers):
+See where the pods landed:
 ```
 kubectl get po -n topo-demo -o wide -l app=whoami
 ```
-Start a client pinned to **one** worker node, so you control where traffic originates. Replace `<worker>` with one of your worker node names:
+
+### What is that `topologySpreadConstraints` block?
+Without it the scheduler is free to pile all replicas onto one node. `topologySpreadConstraints` tells the scheduler to **spread pods evenly across a topology domain**:
+
+- `topologyKey: kubernetes.io/hostname` - the domain is "the node". So spread across nodes. Use `topology.kubernetes.io/zone` to spread across zones instead.
+- `maxSkew: 1` - the pod counts between any two domains may differ by at most 1 (so on 2 nodes you get 2+2, not 3+1).
+- `whenUnsatisfiable` - `ScheduleAnyway` (soft, best effort) or `DoNotSchedule` (hard, leave the pod Pending rather than break the skew).
+- `labelSelector` - which pods count toward the skew (here, other `whoami` pods).
+
+Why it matters for this lab: an **even spread is a prerequisite for topology-aware routing**. The topology-aware-hints algorithm only keeps traffic in-zone when each zone has a share of endpoints **proportional to its capacity**; if one zone has far fewer endpoints, it deliberately sends cross-zone traffic rather than overload the small zone. So "spread the pods" and "route locally" go together.
+
+## Pinning pods with node affinity
+`topologySpreadConstraints` spreads pods out. Sometimes you instead want to **pin** pods to specific nodes (a zone, GPU nodes, an ingress tier). Two ways:
+
+`nodeSelector` is the simple exact-match form:
+```
+spec:
+  template:
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/zone: zone-a
+```
+
+`nodeAffinity` is the expressive form, with hard and soft rules:
+```
+spec:
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          # hard: only schedule where this matches
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values: ["zone-a", "zone-b"]
+          # soft: prefer these, but schedule elsewhere if needed
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: disktype
+                operator: In
+                values: ["ssd"]
+```
+`IgnoredDuringExecution` means the rule is only checked at **scheduling** time; a pod is not evicted if the node's labels change later. Related, but not covered here: **pod** affinity / anti-affinity, which place pods relative to **other pods** (co-locate or keep apart) rather than relative to node labels.
+
+Start a client pinned to **one** worker node (using `nodeName`, the bluntest pin of all), so you control where traffic originates. Replace `<worker>`:
 ```
 kubectl run client -n topo-demo --image xxradar/hackon \
   --overrides='{"spec":{"nodeName":"<worker>"}}' --command -- sleep 3600
@@ -76,46 +123,58 @@ Switch the service to node-local:
 ```
 kubectl patch svc whoami -n topo-demo -p '{"spec":{"internalTrafficPolicy":"Local"}}'
 ```
-Curl again. Now you only ever hit the whoami pods running on the client's node:
+Curl again. Now you only ever hit the whoami pods on the client's node:
 ```
 for i in $(seq 12); do kubectl exec -n topo-demo client -- curl -s whoami | grep Hostname; done | sort | uniq -c
 ```
-The trade-off: if the client's node has **no** whoami pod, the request fails. There is no fallback. Reset when done:
+The trade-off: if the client's node has **no** whoami pod, the request fails, there is no fallback. Reset when done:
 ```
 kubectl patch svc whoami -n topo-demo -p '{"spec":{"internalTrafficPolicy":"Cluster"}}'
 ```
 
-## B. trafficDistribution: topology-aware routing (dataplane-dependent)
-kind nodes have no real zones, so label two workers to simulate them. Replace the names with your workers, and make sure the `client` pod is on the node you label `zone-a`:
+## B. Zone-local routing (topology-aware) - and why the dataplane matters
+This part keeps traffic in the client's **zone**. First give yourself a balanced 2+2 spread across two simulated zones (kind has no real zones). Label the nodes, then re-roll whoami so it spreads by zone:
 ```
 kubectl label no <worker-1> topology.kubernetes.io/zone=zone-a --overwrite
 kubectl label no <worker-2> topology.kubernetes.io/zone=zone-b --overwrite
 ```
-Ask for same-zone routing:
+Make sure your `client` pod is on the `zone-a` node.
+
+There are two ways to ask for zone-local routing, and on Cilium they are **not** equivalent:
+
+### The modern field: `spec.trafficDistribution`
 ```
 kubectl patch svc whoami -n topo-demo -p '{"spec":{"trafficDistribution":"PreferSameZone"}}'
 ```
-The **control plane** does its part: the EndpointSlice controller adds per-zone hints. Confirm:
+The control plane sets per-zone hints on the EndpointSlice:
 ```
 kubectl get endpointslices -n topo-demo -l kubernetes.io/service-name=whoami \
   -o jsonpath='{range .items[*].endpoints[*]}{.targetRef.name}{"  zone="}{.zone}{"  hint="}{.hints.forZones[*].name}{"\n"}{end}'
 ```
-(If `zone=` is empty, the pods were created before you labeled the nodes; run `kubectl rollout restart deploy/whoami -n topo-demo` and re-check.)
+- On a **kube-proxy** cluster this is enough, traffic stays in-zone.
+- On a **Cilium kube-proxy replacement** cluster (our course setup, tested on 1.19.6) it is **ignored**, traffic still spreads across both zones. Cilium does not act on the `trafficDistribution` field in this version.
 
-Now curl from the zone-a client:
+### Cilium's way: the topology-mode annotation + serviceTopology
+Cilium's topology-aware routing is driven by the older annotation plus a Helm flag. Enable the flag on the Cilium install:
 ```
-for i in $(seq 12); do kubectl exec -n topo-demo client -- curl -s whoami | grep Hostname; done | sort | uniq -c
+helm upgrade cilium cilium/cilium --version 1.19.6 -n kube-system --reuse-values \
+  --set loadBalancer.serviceTopology=true
+kubectl -n kube-system rollout restart ds/cilium
 ```
-What you observe depends on the dataplane:
-
-- On a **kube-proxy** cluster (iptables / IPVS), traffic stays on the zone-a pods, the hints are enforced.
-- On a **Cilium kube-proxy replacement** cluster (our course setup), traffic **still spreads across both zones**. The hints are present, but Cilium does not enforce `trafficDistribution` by default. Enabling `--set loadBalancer.serviceTopology=true` on the Cilium install helps only partially in current versions, and `PreferSameNode` is not honored at all.
-
-That difference is the real takeaway: the same Service YAML gives you zone-local routing under kube-proxy and does nothing under Cilium's dataplane. For reliable node-locality on Cilium, use `internalTrafficPolicy: Local` from Part A instead.
+Then annotate the service (drop the `trafficDistribution` field first so they do not fight):
+```
+kubectl patch svc whoami -n topo-demo --type=json -p='[{"op":"remove","path":"/spec/trafficDistribution"}]'
+kubectl annotate svc whoami -n topo-demo service.kubernetes.io/topology-mode=Auto --overwrite
+```
+Now a `zone-a` client only hits the two `zone-a` pods:
+```
+for i in $(seq 16); do kubectl exec -n topo-demo client -- curl -s whoami | grep Hostname; done | sort | uniq -c
+```
+If you still see zone-b pods, check that the spread is balanced (2+2) and that the `client` is really on the `zone-a` node; with an unbalanced spread the safety heuristic falls back to cross-zone on purpose.
 
 ## Explore it yourself
-* With `internalTrafficPolicy: Local`, scale whoami to 1 replica. If it lands on a node other than the client's, what happens to your curls?
-* On your cluster, does `trafficDistribution: PreferSameZone` actually restrict traffic, or just set hints? What does that tell you about who enforces it?
+* Recreate whoami with `nodeSelector: topology.kubernetes.io/zone: zone-a`. All pods now live in zone-a. What happens to a `zone-b` client under zone-local routing, and under `internalTrafficPolicy: Local`?
+* Delete one zone-a pod so the spread becomes 1+2. Does zone-local routing still keep traffic in-zone, or does the safety heuristic kick in?
 * These tune **east-west** traffic. How does that differ from `externalTrafficPolicy` in LAB040, which tunes **north-south** ingress?
 
 ## Cleanup
@@ -124,5 +183,6 @@ kubectl delete ns topo-demo
 kubectl label no <worker-1> topology.kubernetes.io/zone-
 kubectl label no <worker-2> topology.kubernetes.io/zone-
 ```
+If you enabled it, you can also turn Cilium service topology back off with another `helm upgrade ... --set loadBalancer.serviceTopology=false` and a rollout restart.
 
-> Takeaway: `internalTrafficPolicy: Local` keeps traffic on the client's node and is honored by every dataplane. `trafficDistribution` (topology-aware routing) expresses zone/node preference, but whether it is actually enforced depends on the dataplane: kube-proxy honors it, Cilium's kube-proxy replacement currently does not. The Service API states intent; the dataplane decides.
+> Takeaway: scheduling controls (`topologySpreadConstraints`, `nodeSelector`, `nodeAffinity`) decide **where pods run**; that placement is a prerequisite for locality. `internalTrafficPolicy: Local` keeps traffic on the client's node and is honored by every dataplane. Zone-local routing is dataplane-specific: kube-proxy honors `spec.trafficDistribution`, while Cilium honors the `service.kubernetes.io/topology-mode: Auto` annotation with `loadBalancer.serviceTopology=true`. Same intent, different switch, know which dataplane you are on.
