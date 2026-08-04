@@ -55,3 +55,17 @@ The same proxy lets you browse the API directly:
 ```
 curl http://localhost:8001/api/v1/
 ```
+
+## Cleanup (important)
+The commands above run in the **background** (`&`) and keep listening after the lab. This matters for security: if anyone used `--address 0.0.0.0` (on the port-forward, or worse on `kubectl proxy`), the service, or an **unauthenticated path to the Kubernetes API**, is exposed on every interface of the host, reachable from outside the jumpbox. Always shut them down.
+
+Kill the port-forwards and the proxy:
+```
+pkill -f "kubectl port-forward"
+pkill -f "kubectl proxy"
+```
+Verify nothing is still listening on those ports (should print nothing):
+```
+ss -lntp | grep -E ':8888|:8890|:8001' || echo "clean"
+```
+`jobs` also shows any still-running background jobs in this shell; `kill %1 %2 ...` clears them by job number.
