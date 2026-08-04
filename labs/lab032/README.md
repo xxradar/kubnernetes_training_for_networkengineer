@@ -10,6 +10,8 @@ Kubernetes uses three probes to decide the state of a container. For a network e
 - **startup**: has a slow app finished starting? Until it passes, liveness and readiness are held off, so a slow starter is not killed before it is up.
 
 ## Add probes to the nginx deployment
+> **In production, health endpoints are part of the application.** Real apps expose dedicated endpoints (commonly `/livez` and `/readyz`, e.g. Spring Boot Actuator, ASP.NET health checks, a gRPC health service) that are built into the image, where the app itself decides what "alive" and "ready" mean. We do **not** have that in a plain `nginx` image, so here we fake it with a `/healthz` file and a `/tmp/alive` file purely to demonstrate the concept and to be able to toggle each probe by hand. Do not copy this file trick into real workloads.
+
 Re-apply the `nginx-deployment` from the earlier labs, this time with probes added. The container writes a `/healthz` file (served over HTTP) and a `/tmp/alive` file before starting nginx. The readiness and startup probes check `/healthz` over HTTP, the liveness probe checks `/tmp/alive`. Toggling those two files lets you drive each probe by hand.
 ```
 kubectl apply -f - <<EOF
