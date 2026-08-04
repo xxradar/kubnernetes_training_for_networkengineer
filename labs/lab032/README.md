@@ -64,6 +64,8 @@ kubectl get po -n prod-nginx -l app=nginx -o wide
 kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-clusterip
 ```
 
+> **Tip:** open a **second terminal** for the exercises below. Keep a `kubectl get po ... -w` watch running in one terminal, and run the break/fix `kubectl exec` commands in the other so you can watch the state change live.
+
 ## Readiness gates the Endpoints
 Break the readiness check on **one** pod by deleting its `/healthz` file, so `GET /healthz` starts returning 404:
 ```
