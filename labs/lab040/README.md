@@ -61,4 +61,18 @@ kubectl get endpointslices -n prod-nginx -l kubernetes.io/service-name=my-nginx-
 * Which of the two services is reachable from **outside** the cluster, and which only from inside?
 * What port range did the node port come from, and how would you pin a specific one?
 
-> Takeaway: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB050) sits on top of.
+## Source IP, SNAT, and externalTrafficPolicy
+By default (`externalTrafficPolicy: Cluster`) a node that has no local pod relays your connection to a pod on another node. To make the reply come back the way it came, the entry node **SNATs** the packet, replacing the client IP with its own. Two consequences for network engineers:
+
+- The backend pod (and anything it feeds, logs, network policy, an external firewall) sees the **node's IP, not the real client IP**. Source-IP based rules break.
+- There is an extra hop (client -> entry node -> pod's node -> pod).
+
+Set the service to `externalTrafficPolicy: Local` to fix this:
+```
+kubectl patch svc my-nginx-nodeport -n prod-nginx -p '{"spec":{"externalTrafficPolicy":"Local"}}'
+```
+Now only nodes that actually run a pod answer the node port, so there is no cross-node hop and no SNAT, and the pod sees the **real client IP**. The trade-off is that pod-less nodes drop the connection, so in front of a NodePort you normally put a load balancer that health-checks the node port and only sends traffic to nodes with a ready pod (this is exactly what cloud LBs and MetalLB do).
+
+Where does eBPF come in? With Cilium's kube-proxy replacement (our setup) the NodePort path is handled in eBPF instead of iptables, and Cilium can do **DSR (Direct Server Return)**: the pod replies **directly** to the client instead of hair-pinning back through the entry node. That preserves the client source IP **and** removes the return-path detour even in the `Cluster` case, giving you source-IP preservation without forcing `Local`. (Enable with `--set loadBalancer.mode=dsr` on the Cilium install.)
+
+> Takeaway: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB050) sits on top of. Mind the source IP: default `Cluster` policy SNATs and hides the client; `externalTrafficPolicy: Local` or Cilium eBPF DSR preserves it.
