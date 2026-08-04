@@ -57,14 +57,20 @@ spec:
       limits:   {cpu: "200m", memory: "100Mi"}
 EOF
 ```
-Watch it get killed and restarted (memory cannot be "throttled"):
+Watch it get killed and restarted (memory cannot be throttled). The restart count climbs and the pod settles into `CrashLoopBackOff`:
 ```
 kubectl get po -n resource-demo mem-demo -w
 ```
+Confirm it was the memory limit by looking at the terminated container:
 ```
-kubectl get po -n resource-demo mem-demo -o jsonpath='{.status.containerStatuses[0].lastState.terminated.reason}{"  restarts="}{.status.containerStatuses[0].restartCount}'
+kubectl describe pod mem-demo -n resource-demo
 ```
-You will see `OOMKilled` and a rising restart count (then `CrashLoopBackOff`).
+```
+kubectl get po -n resource-demo mem-demo -o jsonpath='{.status.containerStatuses[0].lastState.terminated.reason}{" exit="}{.status.containerStatuses[0].lastState.terminated.exitCode}{" restarts="}{.status.containerStatuses[0].restartCount}{"\n"}'
+```
+The reliable proof of an OOM kill is **`Exit Code: 137`** (128 + 9, SIGKILL from the kernel OOM killer) together with a **climbing restart count**.
+
+> **Gotcha: `OOMKilled` vs `Error`.** The `Reason` field may read `OOMKilled` on one node and the generic `Error` on another, for the exact same pod. On cgroup v2 it depends on which process the kernel OOM killer picks. `stress --vm 1` runs a parent (PID 1) plus a worker child; if the **child** is the victim, the runtime cannot attribute the kill to the container's init process and reports `Error` (still exit 137). You get `OOMKilled` when PID 1 is killed or the whole cgroup is killed together (`memory.oom.group`). So do not key on the word `OOMKilled`, trust **exit code 137 + rising restarts**.
 
 ## C. Quality of Service (QoS) classes
 Kubernetes derives a **QoS class** from how you set requests and limits. It decides the **eviction order** when a node runs out of memory:
@@ -145,7 +151,7 @@ Once a `ResourceQuota` that limits `requests.*`/`limits.*` exists, every new pod
 
 ## Explore it yourself
 * Raise `cpu-demo`'s CPU limit to `2` and re-check `cpu.stat`. Does the throttling stop?
-* Give `mem-demo` a `256Mi` limit. Does it still get OOMKilled?
+* Give `mem-demo` a `256Mi` limit. Does it still get killed (exit 137), or does it now fit?
 * With the `ResourceQuota` in place, try to create a pod with no resources. What does the API server say?
 * Which QoS class would you give a critical security agent, and why?
 
