@@ -1,0 +1,38 @@
+# Schedule a workload only on GPU nodes.
+# - nodeSelector matches a GPU node label. The NVIDIA GPU Operator / Node Feature
+#   Discovery sets nvidia.com/gpu.present=true, or label a node yourself:
+#     kubectl label node <node> nvidia.com/gpu.present=true
+# - the nvidia.com/gpu resource (advertised by the NVIDIA device plugin) makes the
+#   scheduler pick a node with a free GPU, and reserves one for this pod.
+# - the toleration lets it land on GPU nodes, which are usually tainted so that only
+#   GPU workloads schedule there.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpu-workload
+  namespace: topo-demo
+  labels:
+    app: gpu-workload
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gpu-workload
+  template:
+    metadata:
+      labels:
+        app: gpu-workload
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: cuda
+        image: nvidia/cuda:12.4.0-base-ubuntu22.04
+        command: ["sh", "-c", "nvidia-smi; sleep infinity"]
+        resources:
+          limits:
+            nvidia.com/gpu: 1
