@@ -7,6 +7,7 @@
 * [Services - ClusterIP - Lab030](labs/lab030/README.md)
 * [Health probes (readiness, liveness, startup) - Lab032](labs/lab032/README.md)
 * [Accessing kubernetes services when things get tough - Lab035](labs/lab035/README.md)
+* [Traffic locality: internalTrafficPolicy and topology-aware routing (optional) - Lab037](labs/lab037/README.md)
 * [Services - NodePort - Lab040](labs/lab040/README.md)
 * [Services - LoadBalancer - Lab050](labs/lab050/README.md)
 * [Ingress controllers - Lab060](labs/lab060/README.md)
