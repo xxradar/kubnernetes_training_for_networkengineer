@@ -105,7 +105,36 @@ spec:
                 operator: In
                 values: ["ssd"]
 ```
-`IgnoredDuringExecution` means the rule is only checked at **scheduling** time; a pod is not evicted if the node's labels change later. Related, but not covered here: **pod** affinity / anti-affinity, which place pods relative to **other pods** (co-locate or keep apart) rather than relative to node labels.
+`IgnoredDuringExecution` means the rule is only checked at **scheduling** time; a pod is not evicted if the node's labels change later.
+
+### Pod affinity and anti-affinity
+Node affinity places pods relative to **node labels**. **Pod** affinity/anti-affinity places pods relative to **other pods**, using a `topologyKey` to define the domain (`kubernetes.io/hostname` = same node, `topology.kubernetes.io/zone` = same zone).
+
+- **podAffinity**: schedule this pod **into the same domain** as pods matching a selector. Use it to co-locate components that interact a lot, for example placing an inline inspection or proxy pod on the **same node** as the workloads it protects, so that traffic never leaves the node before it is inspected.
+- **podAntiAffinity**: schedule this pod **away from** pods matching a selector. Use it for high availability, for example spreading the replicas of a security gateway across different nodes or zones so a single node failure cannot take the whole tier down.
+
+Example: keep at most one `waf` replica per node (anti-affinity for HA) and prefer to land on the same node as the `app` it fronts (affinity for locality):
+```
+spec:
+  template:
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: waf
+            topologyKey: kubernetes.io/hostname
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: app
+              topologyKey: kubernetes.io/hostname
+```
+As with node affinity, `required...` is hard (leave the pod Pending if it cannot be satisfied) and `preferred...` is soft. Note that required anti-affinity across many pods gets expensive for the scheduler at scale, so `preferred` is often the pragmatic choice. This is also how you would pin a per-workload security sidecar next to the app it guards, or guarantee two replicas of an appliance never share a node.
 
 Start a client pinned to **one** worker node (using `nodeName`, the bluntest pin of all), so you control where traffic originates. Replace `<worker>`:
 ```
