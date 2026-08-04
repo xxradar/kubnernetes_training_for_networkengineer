@@ -75,4 +75,4 @@ Now only nodes that actually run a pod answer the node port, so there is no cros
 
 Where does eBPF come in? With Cilium's kube-proxy replacement (our setup) the NodePort path is handled in eBPF instead of iptables, and Cilium can do **DSR (Direct Server Return)**: the pod replies **directly** to the client instead of hair-pinning back through the entry node. That preserves the client source IP **and** removes the return-path detour even in the `Cluster` case, giving you source-IP preservation without forcing `Local`. (Enable with `--set loadBalancer.mode=dsr` on the Cilium install.)
 
-> Takeaway: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB050) sits on top of. Mind the source IP: default `Cluster` policy SNATs and hides the client; `externalTrafficPolicy: Local` or Cilium eBPF DSR preserves it.
+> Takeaway: a NodePort opens the same high port on every node and forwards inward to the pods. It is the building block that a LoadBalancer service (LAB050) sits on top of.
