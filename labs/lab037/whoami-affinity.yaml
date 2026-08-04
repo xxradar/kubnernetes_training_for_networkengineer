@@ -1,0 +1,74 @@
+# Reference manifest showing all scheduling constructs together.
+# The required rule (os=linux) is satisfiable everywhere, and every other rule
+# is "preferred" (soft), so this applies and schedules on any multi-node cluster.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whoami-affinity
+  namespace: topo-demo
+  labels:
+    app: whoami-affinity
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: whoami-affinity
+  template:
+    metadata:
+      labels:
+        app: whoami-affinity
+    spec:
+      # Spread replicas evenly across nodes (soft).
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: whoami-affinity
+      affinity:
+        nodeAffinity:
+          # hard: only schedule on nodes matching this
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values: ["linux"]
+          # soft: prefer zone-a, then ssd nodes
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values: ["zone-a"]
+          - weight: 50
+            preference:
+              matchExpressions:
+              - key: disktype
+                operator: In
+                values: ["ssd"]
+        podAntiAffinity:
+          # soft: try not to put two whoami-affinity pods on the same node (HA)
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: whoami-affinity
+              topologyKey: kubernetes.io/hostname
+        podAffinity:
+          # soft: prefer to land on a node already running app=app (co-location)
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: app
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: whoami
+        image: traefik/whoami
+        ports:
+        - containerPort: 80
