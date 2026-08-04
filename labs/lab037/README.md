@@ -136,6 +136,8 @@ spec:
 ```
 As with node affinity, `required...` is hard (leave the pod Pending if it cannot be satisfied) and `preferred...` is soft. Note that required anti-affinity across many pods gets expensive for the scheduler at scale, so `preferred` is often the pragmatic choice. This is also how you would pin a per-workload security sidecar next to the app it guards, or guarantee two replicas of an appliance never share a node.
 
+> **DaemonSet vs anti-affinity.** Both can produce "one pod per node", but they answer different questions. A **DaemonSet** runs one copy on **every** matching node and follows the node set: add a node and a pod appears there, remove a node and its pod goes away. A **Deployment with `replicas: N` + required anti-affinity** runs a **fixed count** spread across distinct nodes: adding a node does nothing on its own, and setting `replicas` above the node count leaves the extras `Pending`. Use a DaemonSet for "every node needs this agent" (CNI, log or metrics collector, per-node security agent, see LAB020); use anti-affinity for "N replicas of my app, just not stacked on one node".
+
 Start a client pinned to **one** worker node (using `nodeName`, the bluntest pin of all), so you control where traffic originates. Replace `<worker>`:
 ```
 kubectl run client -n topo-demo --image xxradar/hackon \
