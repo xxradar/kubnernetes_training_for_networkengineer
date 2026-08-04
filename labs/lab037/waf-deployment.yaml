@@ -1,0 +1,43 @@
+# WAF deployment for the pod affinity / anti-affinity example.
+# - podAntiAffinity (hard): no two waf replicas share a node (HA). Needs at least as
+#   many schedulable nodes as replicas, or the extras stay Pending.
+# - podAffinity (soft): prefer a node already running app=app, to sit next to the
+#   workload the WAF fronts.
+# (image is a stand-in; swap in your real WAF/proxy image.)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waf
+  namespace: topo-demo
+  labels:
+    app: waf
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: waf
+  template:
+    metadata:
+      labels:
+        app: waf
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: waf
+            topologyKey: kubernetes.io/hostname
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: app
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: waf
+        image: nginx
+        ports:
+        - containerPort: 80
