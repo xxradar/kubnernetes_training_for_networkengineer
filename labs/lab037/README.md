@@ -167,7 +167,21 @@ spec:
 
 The key gotcha: a toleration only **allows** a pod onto a tainted node, it does not **attract** it. To actually pin your workloads onto dedicated nodes you pair the **taint** (keeps everyone else off) with a **`nodeSelector`/`nodeAffinity`** (pulls yours on). That combination is how you carve out a dedicated node pool, GPU nodes, a PCI/regulated tenant, or a hardened node for security appliances, so only sanctioned pods land there and a compromised general-purpose pod cannot schedule onto it.
 
-You already rely on built-in taints: control-plane nodes carry `node-role.kubernetes.io/control-plane:NoSchedule` (that is why your app pods stay off the masters), and the node controller adds `node.kubernetes.io/not-ready` and `unreachable` with `NoExecute` to drain pods off a failed node. Remove a taint by re-running the command with a trailing `-`: `kubectl taint nodes <worker> dedicated=security:NoSchedule-`.
+You already rely on built-in taints: control-plane nodes carry `node-role.kubernetes.io/control-plane:NoSchedule` (that is why your app pods stay off the masters), and the node controller adds `node.kubernetes.io/not-ready` and `unreachable` with `NoExecute` to drain pods off a failed node.
+
+**Finding and removing a taint (common gotcha).** A pod stuck in `Pending` for no obvious reason is very often an untolerated taint. The scheduler tells you so, look at the pod's events:
+```
+kubectl describe pod <pod> | grep -A2 Events
+# ... 0/3 nodes are available: 1 node(s) had untolerated taint {dedicated: security} ...
+```
+List the taints on every node to see which one is in the way:
+```
+kubectl get nodes -o custom-columns=NAME:.metadata.name,TAINTS:.spec.taints
+```
+or read them on one node with `kubectl describe node <node>` (the `Taints:` line). Remove a taint by re-running the taint command with a trailing `-` (matching key and effect):
+```
+kubectl taint nodes <worker> dedicated=security:NoSchedule-
+```
 
 Start a client pinned to **one** worker node (using `nodeName`, the bluntest pin of all), so you control where traffic originates. Replace `<worker>`:
 ```
