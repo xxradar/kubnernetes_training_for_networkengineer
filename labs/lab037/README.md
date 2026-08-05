@@ -71,7 +71,7 @@ Without it the scheduler is free to pile all replicas onto one node. `topologySp
 Why it matters for this lab: an **even spread is a prerequisite for topology-aware routing**. The topology-aware-hints algorithm only keeps traffic in-zone when each zone has a share of endpoints **proportional to its capacity**; if one zone has far fewer endpoints, it deliberately sends cross-zone traffic rather than overload the small zone. So "spread the pods" and "route locally" go together.
 
 ## Pinning pods with node affinity
-> **Scheduler, not dataplane.** Everything about pod **placement** here, `topologySpreadConstraints`, `nodeSelector`, node affinity, pod affinity/anti-affinity, and DaemonSets, is decided by the kube-scheduler and behaves the **same on any CNI** (Cilium, Calico, kube-proxy). Only the **traffic-routing** parts further down (`internalTrafficPolicy` and topology-aware routing) have dataplane-specific behavior.
+> **Scheduler, not dataplane.** Everything about pod **placement** here, `topologySpreadConstraints`, `nodeSelector`, node affinity, pod affinity/anti-affinity, taints/tolerations, and DaemonSets, is decided by the kube-scheduler and behaves the **same on any CNI** (Cilium, Calico, kube-proxy). Only the **traffic-routing** parts further down (`internalTrafficPolicy` and topology-aware routing) have dataplane-specific behavior.
 
 `topologySpreadConstraints` spreads pods out. Sometimes you instead want to **pin** pods to specific nodes (a zone, GPU nodes, an ingress tier). Two ways:
 
@@ -140,6 +140,34 @@ As with node affinity, `required...` is hard (leave the pod Pending if it cannot
 
 > **DaemonSet vs anti-affinity.** Both can produce "one pod per node", but they answer different questions. A **DaemonSet** runs one copy on **every** matching node and follows the node set: add a node and a pod appears there, remove a node and its pod goes away. <br>
 > A **Deployment with `replicas: N` + required anti-affinity** runs a **fixed count** spread across distinct nodes: adding a node does nothing on its own, and setting `replicas` above the node count leaves the extras `Pending`. Use a DaemonSet for "every node needs this agent" (CNI, log or metrics collector, per-node security agent, see LAB020); use anti-affinity for "N replicas of my app, just not stacked on one node".
+
+### Taints and tolerations (the other direction)
+Everything above is **pull**: the pod chooses where it wants to land. A **taint** is **push**: the node repels every pod that does not explicitly **tolerate** it. The two are complementary and usually used together.
+
+A taint is a key, optional value, and an **effect**:
+
+- `NoSchedule` - new pods without a matching toleration are not scheduled here.
+- `PreferNoSchedule` - the soft version: avoid if possible, but allowed.
+- `NoExecute` - stronger: also **evicts** already-running pods that do not tolerate it.
+
+Taint a node, then give the pod the matching toleration:
+```
+kubectl taint nodes <worker> dedicated=security:NoSchedule
+```
+```
+spec:
+  template:
+    spec:
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: security
+        effect: NoSchedule
+```
+
+The key gotcha: a toleration only **allows** a pod onto a tainted node, it does not **attract** it. To actually pin your workloads onto dedicated nodes you pair the **taint** (keeps everyone else off) with a **`nodeSelector`/`nodeAffinity`** (pulls yours on). That combination is how you carve out a dedicated node pool, GPU nodes, a PCI/regulated tenant, or a hardened node for security appliances, so only sanctioned pods land there and a compromised general-purpose pod cannot schedule onto it.
+
+You already rely on built-in taints: control-plane nodes carry `node-role.kubernetes.io/control-plane:NoSchedule` (that is why your app pods stay off the masters), and the node controller adds `node.kubernetes.io/not-ready` and `unreachable` with `NoExecute` to drain pods off a failed node. Remove a taint by re-running the command with a trailing `-`: `kubectl taint nodes <worker> dedicated=security:NoSchedule-`.
 
 Start a client pinned to **one** worker node (using `nodeName`, the bluntest pin of all), so you control where traffic originates. Replace `<worker>`:
 ```

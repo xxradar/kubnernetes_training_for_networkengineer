@@ -1,0 +1,41 @@
+# Pin a workload onto a dedicated (tainted) node pool.
+#
+# The taint keeps everyone else OFF; the toleration + nodeSelector pull THIS
+# workload ON. A toleration alone only *allows* scheduling, it does not attract.
+#
+# Prepare a node:
+#   kubectl taint nodes <worker> dedicated=security:NoSchedule
+#   kubectl label  nodes <worker> dedicated=security
+# Remove the taint later:
+#   kubectl taint nodes <worker> dedicated=security:NoSchedule-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-appliance
+  namespace: topo-demo
+  labels:
+    app: security-appliance
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: security-appliance
+  template:
+    metadata:
+      labels:
+        app: security-appliance
+    spec:
+      # attract: only land on nodes labelled for the dedicated pool
+      nodeSelector:
+        dedicated: security
+      # allow: pass the NoSchedule taint on those nodes
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: security
+        effect: NoSchedule
+      containers:
+      - name: whoami
+        image: traefik/whoami
+        ports:
+        - containerPort: 80
