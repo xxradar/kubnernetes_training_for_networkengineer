@@ -24,17 +24,17 @@
 + labs 030, 032, 035, 040, 050
 
 ## Session 3
+- Intro storage
 - Secrets and ConfigMaps
 - Ingress
 - Gateway API
 + labs 060, 065
 
 ## Session 4
-- Intro storage
 - Resource requests / limits (as a security control)
 - securityContext hardening (runAsNonRoot, readOnlyRootFS, drop caps, seccomp)
 - Network policies (default-deny)
-- labs 070 080
+- labs 025, 070 080
 
 
 ## Session 5
