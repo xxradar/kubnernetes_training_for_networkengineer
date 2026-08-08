@@ -34,6 +34,42 @@ Read it back, then delete the pod and note the data is gone forever:
 kubectl exec -n storage-demo scratch -- cat /data/file
 kubectl delete pod scratch -n storage-demo
 ```
+### Sharing between containers (init container + main)
+The real use of `emptyDir` is **sharing a directory between containers in the same pod**. A classic pattern: an **init container** prepares content into the shared volume, then the **main container** serves it. Same volume, two containers, a clean handoff.
+```
+kubectl apply -n storage-demo -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shared-web
+spec:
+  initContainers:
+  - name: fetch-content            # runs first, writes into the shared volume
+    image: busybox
+    command: ["sh","-c","echo '<h1>Served from a shared emptyDir</h1>' > /work/index.html"]
+    volumeMounts:
+    - name: web
+      mountPath: /work
+  containers:
+  - name: web                      # starts after init finishes, serves the file
+    image: nginx:alpine
+    volumeMounts:
+    - name: web
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+  volumes:
+  - name: web
+    emptyDir: {}
+EOF
+```
+The init container writes `index.html` into the `emptyDir`; nginx mounts the **same** volume and serves it. Prove it end to end:
+```
+kubectl wait --for=condition=Ready pod/shared-web -n storage-demo --timeout=60s
+kubectl port-forward -n storage-demo pod/shared-web 8080:80 &
+curl -s localhost:8080
+```
+You get back the HTML the init container produced, served by a different container, because they share the volume. In real life the init container might `git clone` or `curl` the content instead of echoing it. Stop the port-forward with `kill %1` when done.
+
 `emptyDir` is not persistence, it is a shared RAM/disk tmp between containers. For anything you care about, keep reading.
 
 ## B. hostPath - a directory from the node

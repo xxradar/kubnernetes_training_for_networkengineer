@@ -1,0 +1,30 @@
+# Two containers sharing one emptyDir.
+# - initContainer "fetch-content" runs first and writes index.html into the
+#   shared volume (in real life it might git clone or curl the content).
+# - main container "web" (nginx) mounts the SAME volume and serves it.
+# Proof of sharing: nginx serves a file it never created itself.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shared-web
+  namespace: storage-demo
+spec:
+  initContainers:
+  - name: fetch-content
+    image: busybox
+    command: ["sh","-c","echo '<h1>Served from a shared emptyDir</h1>' > /work/index.html"]
+    volumeMounts:
+    - name: web
+      mountPath: /work
+  containers:
+  - name: web
+    image: nginx:alpine
+    volumeMounts:
+    - name: web
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+  volumes:
+  - name: web
+    emptyDir: {}
