@@ -28,7 +28,7 @@
 - Secrets and ConfigMaps
 - Ingress
 - Gateway API
-+ labs 060, 065
++ labs 061, 062, 063, 065
 
 ## Session 4
 - Resource requests / limits (as a security control)

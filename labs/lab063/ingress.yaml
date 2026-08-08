@@ -1,0 +1,22 @@
+# The classic Ingress: route Host "echo.local", any path, to the echo Service.
+# ingressClassName binds it to Cilium's built-in ingress controller (already
+# enabled in LAB000). Add more rules (hosts/paths) to fan one entry point out
+# to many Services.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo
+  namespace: ingress-demo
+spec:
+  ingressClassName: cilium
+  rules:
+  - host: echo.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: echo
+            port:
+              number: 80

@@ -1,0 +1,48 @@
+# A tiny echo backend + an internal (ClusterIP) Service.
+# The Ingress (ingress.yaml) publishes this Service at L7 by Host/path.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo
+  namespace: ingress-demo
+  labels:
+    app: echo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: echo
+  template:
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+      - name: echo
+        image: hashicorp/http-echo:1.0
+        args:
+        - "-text=Hello from the Ingress backend! Pod: $(POD_NAME)"
+        - "-listen=:8080"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo
+  namespace: ingress-demo
+  labels:
+    app: echo
+spec:
+  type: ClusterIP
+  selector:
+    app: echo
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP

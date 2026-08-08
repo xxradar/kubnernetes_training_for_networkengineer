@@ -1,0 +1,9 @@
+# GatewayClass: which controller handles Gateways of this class ("pick your
+# vendor"). Cluster-scoped, set by the platform. Envoy Gateway watches for
+# this controllerName.
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller

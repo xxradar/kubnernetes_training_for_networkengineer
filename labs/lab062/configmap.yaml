@@ -1,0 +1,12 @@
+# Declarative form of:
+#   kubectl create configmap app-config --from-literal=APP_COLOR=blue ...
+# Non-sensitive configuration. Each key can be injected as an env var or,
+# when mounted as a volume, becomes a file named after the key.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: config-demo
+data:
+  APP_COLOR: blue
+  APP_TIER: frontend

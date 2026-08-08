@@ -1,0 +1,28 @@
+# Consume config + secret as FILES (volume mounts).
+# - ConfigMap at /etc/appconfig: each key -> a file. Updates live (~60s).
+# - Secret at /etc/secrets: each key -> a file, backed by tmpfs (RAM), never
+#   written to the node disk. Prefer this over env for credentials.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: config-vol
+  namespace: config-demo
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","sleep 3600"]
+    volumeMounts:
+    - name: cfg
+      mountPath: /etc/appconfig
+      readOnly: true
+    - name: sec
+      mountPath: /etc/secrets
+      readOnly: true
+  volumes:
+  - name: cfg
+    configMap:
+      name: app-config
+  - name: sec
+    secret:
+      secretName: db-cred

@@ -1,0 +1,16 @@
+# A PersistentVolumeClaim: the app's REQUEST for storage.
+# No storageClassName -> uses the cluster default StorageClass (on kind:
+# "standard" / rancher.io/local-path). Stays Pending until a pod mounts it,
+# because that class uses volumeBindingMode: WaitForFirstConsumer.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-demo
+  namespace: storage-demo
+spec:
+  accessModes:
+  - ReadWriteOnce                  # one node mounts it read-write
+  resources:
+    requests:
+      storage: 1Gi
+  # storageClassName: standard     # optional; omitted -> default class

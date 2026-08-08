@@ -1,0 +1,22 @@
+# hostPath: mount a directory from the NODE's filesystem into the pod.
+# Data survives the pod, but only on this node, and the scheduler does NOT
+# keep the pod pinned here. Security-sensitive: prefer a `local` PV for real
+# node-local storage. Demo only.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-demo
+  namespace: storage-demo
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","sleep 3600"]
+    volumeMounts:
+    - name: host
+      mountPath: /host
+  volumes:
+  - name: host
+    hostPath:
+      path: /tmp/storage-demo      # directory on the node
+      type: DirectoryOrCreate

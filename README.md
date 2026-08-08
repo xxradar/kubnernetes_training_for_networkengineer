@@ -11,7 +11,10 @@
 * [Traffic locality: internalTrafficPolicy and topology-aware routing - Lab037](labs/lab037/README.md) — `Advanced · Optional`
 * [Services - NodePort - Lab040](labs/lab040/README.md) — `Beginner`
 * [Services - LoadBalancer - Lab050](labs/lab050/README.md) — `Beginner`
-* [Ingress controllers - Lab060](labs/lab060/README.md) — `Beginner`
+* [Intro to storage (volumes, hostPath, PVC/PV, StorageClass) - Lab061](labs/lab061/README.md) — `Beginner`
+* [ConfigMaps and Secrets - Lab062](labs/lab062/README.md) — `Beginner`
+* [Ingress (classic L7 entry point) - Lab063](labs/lab063/README.md) — `Beginner`
+* [Gateway API (Envoy Gateway) - Lab065](labs/lab065/README.md) — `Beginner`
 * [Kubernetes native network security policies - Lab070](labs/lab070/README.md) — `Beginner`
 * [Global network security policies - Lab080](labs/lab080/README.md) — `Beginner`
 * [Troubleshooting - Lab100](labs/lab100/README.md) — `Beginner`

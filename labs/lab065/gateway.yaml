@@ -1,0 +1,22 @@
+# Gateway: the listeners + external entry point (the VIP). Owned by the
+# platform/infra team. Envoy Gateway creates a LoadBalancer Service for it,
+# which Cilium LB-IPAM assigns an IP from the pool.
+#
+# allowedRoutes controls WHICH namespaces may attach routes to this listener
+# (the route->Gateway permission, set by the Gateway owner). `All` is used here
+# for simplicity; in production tighten to `Selector` so only sanctioned
+# namespaces can hang routes off a shared gateway (least privilege).
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: eg-gateway
+  namespace: envoy-gateway-system
+spec:
+  gatewayClassName: eg
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All

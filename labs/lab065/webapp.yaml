@@ -1,0 +1,54 @@
+# Sample app (echo server) + its internal ClusterIP Service, in the app team's
+# namespace. The HTTPRoute (httproute.yaml) attaches this Service to the Gateway.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  namespace: demo-app
+  labels:
+    app: webapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: hashicorp/http-echo:1.0
+        args:
+        - "-text=Hello from Gateway API! Pod: $(POD_NAME)"
+        - "-listen=:8080"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: demo-app
+  labels:
+    app: webapp
+spec:
+  type: ClusterIP
+  selector:
+    app: webapp
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
