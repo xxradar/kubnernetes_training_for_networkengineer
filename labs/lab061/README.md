@@ -109,14 +109,15 @@ Create a claim:
 kubectl apply -n storage-demo -f pvc.yaml
 kubectl get pvc -n storage-demo
 ```
-It sits `Pending` on purpose, that is `WaitForFirstConsumer` waiting for a pod. Now create a pod that mounts it:
+It sits `Pending` on purpose, that is `WaitForFirstConsumer` waiting for a pod. Now create a pod that mounts it, and wait for the pod to be Ready:
 ```
 kubectl apply -n storage-demo -f pod-with-pvc.yaml
-kubectl get pvc,pv -n storage-demo
-```
-The PVC flips to `Bound` and a PV appears automatically, created by the `local-path` provisioner. Wait for the pod, then write some data:
-```
 kubectl wait --for=condition=Ready pod/pvc-demo -n storage-demo --timeout=90s
+kubectl get pvc -n storage-demo
+kubectl get pv | grep storage-demo
+```
+Binding is **not instant**. With `WaitForFirstConsumer` the provisioner only creates the PV once the pod is scheduled, and the `standard` / `local-path` provisioner then takes a few seconds to run its helper. That is exactly why the `wait` matters, a `get` issued the moment after `apply` still shows `Pending`. Once the pod is Ready the PVC is `Bound` and a PV has appeared automatically. (PVs are **cluster-scoped**, so on a shared cluster `kubectl get pv` also lists other namespaces' volumes, hence the `grep`.) Write some data:
+```
 kubectl exec -n storage-demo pvc-demo -- sh -c 'echo "persistent data" > /data/state.txt; cat /data/state.txt'
 ```
 Now prove it persists across the pod's life. Delete and recreate **the pod** (not the PVC):
