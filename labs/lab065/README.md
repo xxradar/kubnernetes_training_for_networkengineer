@@ -59,6 +59,7 @@ The `ADDRESS` column shows the external IP (e.g. `172.18.255.200`). If it stays 
 A simple echo app plus its Service, and an **HTTPRoute** that attaches to the Gateway and sends `webapp.local.dev` to the Service:
 ```
 kubectl apply -f webapp.yaml
+kubectl wait --for=condition=Available deploy/webapp -n demo-app --timeout=90s
 kubectl apply -f httproute.yaml
 kubectl get httproute -n demo-app
 ```

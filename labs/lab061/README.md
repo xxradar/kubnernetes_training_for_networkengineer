@@ -29,8 +29,9 @@ spec:
     emptyDir: {}
 EOF
 ```
-Read it back, then delete the pod and note the data is gone forever:
+Wait for it to be ready, read it back, then delete the pod and note the data is gone forever:
 ```
+kubectl wait --for=condition=Ready pod/scratch -n storage-demo --timeout=60s
 kubectl exec -n storage-demo scratch -- cat /data/file
 kubectl delete pod scratch -n storage-demo
 ```
@@ -76,6 +77,7 @@ You get back the HTML the init container produced, served by a different contain
 `hostPath` mounts a path from the **node's own filesystem** into the pod. The data survives the pod, but only on that one node.
 ```
 kubectl apply -n storage-demo -f hostpath-pod.yaml
+kubectl wait --for=condition=Ready pod/hostpath-demo -n storage-demo --timeout=60s
 kubectl exec -n storage-demo hostpath-demo -- sh -c 'echo "written by pod" > /host/hello.txt; cat /host/hello.txt'
 ```
 Two things a network/security engineer must know about `hostPath`:
@@ -112,14 +114,16 @@ It sits `Pending` on purpose, that is `WaitForFirstConsumer` waiting for a pod. 
 kubectl apply -n storage-demo -f pod-with-pvc.yaml
 kubectl get pvc,pv -n storage-demo
 ```
-The PVC flips to `Bound` and a PV appears automatically, created by the `local-path` provisioner. Write some data:
+The PVC flips to `Bound` and a PV appears automatically, created by the `local-path` provisioner. Wait for the pod, then write some data:
 ```
+kubectl wait --for=condition=Ready pod/pvc-demo -n storage-demo --timeout=90s
 kubectl exec -n storage-demo pvc-demo -- sh -c 'echo "persistent data" > /data/state.txt; cat /data/state.txt'
 ```
 Now prove it persists across the pod's life. Delete and recreate **the pod** (not the PVC):
 ```
 kubectl delete pod pvc-demo -n storage-demo
 kubectl apply -n storage-demo -f pod-with-pvc.yaml
+kubectl wait --for=condition=Ready pod/pvc-demo -n storage-demo --timeout=90s
 kubectl exec -n storage-demo pvc-demo -- cat /data/state.txt
 ```
 The file is still there, because it lives in the PV, not the pod.

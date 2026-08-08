@@ -23,6 +23,7 @@ A tiny echo server plus a ClusterIP Service (internal only, the Ingress will pub
 ```
 kubectl create ns ingress-demo
 kubectl apply -n ingress-demo -f ingress-webapp.yaml
+kubectl wait --for=condition=Available deploy/echo -n ingress-demo --timeout=90s
 kubectl get pods,svc -n ingress-demo
 ```
 

@@ -23,6 +23,7 @@ kubectl get configmap app-config -n config-demo -o yaml
 `envFrom` injects every key as an env var; use `valueFrom` for a single key:
 ```
 kubectl apply -n config-demo -f pod-config-env.yaml
+kubectl wait --for=condition=Ready pod/config-env -n config-demo --timeout=60s
 kubectl exec -n config-demo config-env -- printenv APP_COLOR APP_TIER
 ```
 
@@ -30,6 +31,7 @@ kubectl exec -n config-demo config-env -- printenv APP_COLOR APP_TIER
 Mounted as a volume, **each key becomes a file** whose contents are the value. From inside the container it looks like just another directory:
 ```
 kubectl apply -n config-demo -f pod-config-volume.yaml
+kubectl wait --for=condition=Ready pod/config-vol -n config-demo --timeout=60s
 kubectl exec -n config-demo config-vol -- sh -c 'ls /etc/appconfig; echo; cat /etc/appconfig/APP_COLOR'
 ```
 
